@@ -54,19 +54,20 @@ Palette BFF serves as the single entry point for all React frontend applications
 
 ## API Endpoints
 
-| Method | Path                              | Auth | Description          |
-|--------|-----------------------------------|------|----------------------|
-| GET    | /palette/api/v1/system/health/live  | No   | Liveness probe       |
-| GET    | /palette/api/v1/system/health/ready | No   | Readiness probe      |
-| GET    | /palette/api/v1/system/info         | No   | Application info     |
-| GET    | /palette/api/v1/auth/login          | No   | OIDC login entry     |
-| GET    | /palette/api/v1/auth/session        | No   | Auth status check    |
-| POST   | /palette/api/v1/auth/logout         | Yes  | Logout               |
-| GET    | /palette/api/v1/context             | Yes  | User context         |
-| GET    | /palette/api/v1/config              | Yes  | Runtime config       |
-| ANY    | /palette/api/v1/backend/**          | Yes  | Gateway proxy        |
-| POST   | /palette/api/v1/files               | Yes  | File upload          |
-| GET    | /palette/api/v1/files/{id}          | Yes  | File download        |
+| Method | Path                              | Auth | Description                    |
+|--------|-----------------------------------|------|--------------------------------|
+| GET    | /palette/api/v1/system/health/live  | No   | Liveness probe               |
+| GET    | /palette/api/v1/system/health/ready | No   | Readiness probe              |
+| GET    | /palette/api/v1/system/info         | No   | Application info             |
+| GET    | /palette/api/v1/auth/login          | No   | OIDC login entry             |
+| GET    | /palette/api/v1/auth/session        | No   | Auth status check            |
+| GET    | /palette/api/v1/auth/me             | Yes  | User info from eIDP userinfo |
+| POST   | /palette/api/v1/auth/logout         | Yes  | Logout (with eIDP logout)    |
+| GET    | /palette/api/v1/context             | Yes  | User context                 |
+| GET    | /palette/api/v1/config              | Yes  | Runtime config               |
+| ANY    | /palette/api/v1/backend/**          | Yes  | Gateway proxy                |
+| POST   | /palette/api/v1/files               | Yes  | File upload                  |
+| GET    | /palette/api/v1/files/{id}          | Yes  | File download                |
 
 ## Quick Start
 
@@ -91,7 +92,11 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 # Set environment variables
 export EIDP_CLIENT_ID=your-client-id
 export EIDP_CLIENT_SECRET=your-client-secret
-export EIDP_ISSUER_URI=https://eidp.company.com
+export EIDP_AUTHORIZATION_URI=https://eidp.company.com/authorize
+export EIDP_TOKEN_URI=https://eidp.company.com/token
+export EIDP_JWK_SET_URI=https://eidp.company.com/jwks
+export EIDP_USER_INFO_URI=https://eidp.company.com/userinfo
+export EIDP_LOGOUT_URI=https://eidp.company.com/end-session
 
 # Start all services
 docker-compose up -d
@@ -99,19 +104,24 @@ docker-compose up -d
 
 ### Environment Variables
 
-| Variable              | Description                | Default               |
-|-----------------------|----------------------------|-----------------------|
-| SPRING_PROFILES_ACTIVE | Active profiles           | dev                   |
-| REDIS_HOST            | Redis hostname             | localhost             |
-| REDIS_PORT            | Redis port                 | 6379                  |
-| DB_HOST               | PostgreSQL hostname        | localhost             |
-| DB_PORT               | PostgreSQL port            | 5432                  |
-| EIDP_CLIENT_ID        | OAuth2 client ID           | palette-bff           |
-| EIDP_CLIENT_SECRET    | OAuth2 client secret       | (required)            |
-| EIDP_ISSUER_URI       | eIDP issuer URI            | (required)            |
-| CORS_ORIGINS          | Allowed CORS origins       | http://localhost:3000 |
-| COOKIE_DOMAIN         | Cookie domain              | (empty)               |
-| PALETTE_ENV           | Environment name           | UAT                   |
+| Variable                    | Description                        | Default               |
+|-----------------------------|------------------------------------|-----------------------|
+| SPRING_PROFILES_ACTIVE        | Active profiles                   | dev                   |
+| REDIS_HOST                  | Redis hostname                     | localhost             |
+| REDIS_PORT                  | Redis port                         | 6379                  |
+| DB_HOST                     | PostgreSQL hostname                | localhost             |
+| DB_PORT                     | PostgreSQL port                    | 5432                  |
+| EIDP_CLIENT_ID              | OAuth2 client ID                   | palette-bff           |
+| EIDP_CLIENT_SECRET          | OAuth2 client secret               | (required)            |
+| EIDP_AUTHORIZATION_URI      | eIDP authorization endpoint        | https://eidp.company.com/authorize |
+| EIDP_TOKEN_URI              | eIDP token endpoint                | https://eidp.company.com/token |
+| EIDP_JWK_SET_URI            | eIDP JWK Set endpoint              | https://eidp.company.com/jwks |
+| EIDP_USER_INFO_URI          | eIDP UserInfo endpoint             | https://eidp.company.com/userinfo |
+| EIDP_LOGOUT_URI             | eIDP end_session_endpoint          | (empty)               |
+| EIDP_POST_LOGOUT_REDIRECT_URI | Post-logout redirect URI         | http://localhost:8080 |
+| CORS_ORIGINS                | Allowed CORS origins               | http://localhost:3000 |
+| COOKIE_DOMAIN               | Cookie domain                      | (empty)               |
+| PALETTE_ENV                 | Environment name                   | UAT                   |
 
 ## Build
 

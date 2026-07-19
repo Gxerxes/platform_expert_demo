@@ -81,6 +81,9 @@ palette:
     routes: []
   session:
     store-type: redis
+  eidp:
+    logout-uri: ${EIDP_LOGOUT_URI:}
+    post-logout-redirect-uri: ${EIDP_POST_LOGOUT_REDIRECT_URI:http://localhost:8080}
 
 management:
   endpoints:

@@ -71,6 +71,7 @@ All APIs: `/palette/api/v1`
 | Info           | GET    | /palette/api/v1/system/info         | No            |
 | Login          | GET    | /palette/api/v1/auth/login          | No            |
 | Session        | GET    | /palette/api/v1/auth/session        | No*           |
+| UserInfo       | GET    | /palette/api/v1/auth/me             | Yes           |
 | Logout         | POST   | /palette/api/v1/auth/logout         | Yes           |
 | Context        | GET    | /palette/api/v1/context             | Yes           |
 | Config         | GET    | /palette/api/v1/config              | Yes           |
@@ -101,6 +102,7 @@ All APIs: `/palette/api/v1`
 
 ## 6. Authentication Flow
 
+### Login Flow
 ```
 React App
     |
@@ -123,6 +125,54 @@ Set PALETTE_SESSION cookie (HttpOnly, Secure, SameSite)
     |
     v
 React App (receives cookie only, no tokens)
+```
+
+### UserInfo Flow (GET /palette/api/v1/auth/me)
+```
+React App
+    |
+    | GET /palette/api/v1/auth/me
+    | Cookie: PALETTE_SESSION
+    v
+Palette BFF (AuthController)
+    |
+    | Extract Access Token from session
+    | Call eIDP UserInfo endpoint
+    v
+eIDP UserInfo Endpoint
+    |
+    | Returns OIDC claims (sub, name, email, etc.)
+    v
+Palette BFF
+    |
+    | Map claims to UserInfo response
+    v
+React App
+    |
+    | Response: { "data": { "sub": "...", "name": "...", "email": "..." } }
+```
+
+### Logout Flow (POST /palette/api/v1/auth/logout)
+```
+React App
+    |
+    | POST /palette/api/v1/auth/logout
+    | Cookie: PALETTE_SESSION
+    v
+Palette BFF (AuthController)
+    |
+    | 1. Capture userId for audit
+    | 2. Invalidate HTTP session
+    | 3. Clear SecurityContext
+    | 4. Clear session cookie
+    | 5. Generate eIDP logout URL (with id_token_hint)
+    | 6. Record audit event
+    v
+React App
+    |
+    | Response: { "data": { "success": true, "eidpLogoutUrl": "https://eidp.../end-session?id_token_hint=..." } }
+    |
+    | (Optional) Redirect browser to eidpLogoutUrl for SSO logout
 ```
 
 ## 7. Session Management
@@ -247,19 +297,24 @@ docker-compose up -d
 ```
 
 ### Environment Variables
-| Variable            | Description                    | Default              |
-|---------------------|--------------------------------|----------------------|
-| SPRING_PROFILES_ACTIVE | Active profiles            | dev                  |
-| REDIS_HOST          | Redis hostname                 | localhost            |
-| REDIS_PORT          | Redis port                     | 6379                 |
-| DB_HOST             | PostgreSQL hostname            | localhost            |
-| DB_PORT             | PostgreSQL port                | 5432                 |
-| EIDP_CLIENT_ID      | OAuth2 client ID               | palette-bff          |
-| EIDP_CLIENT_SECRET  | OAuth2 client secret           | (required)           |
-| EIDP_ISSUER_URI     | eIDP issuer URI                | (required)           |
-| CORS_ORIGINS        | Allowed CORS origins           | http://localhost:3000|
-| COOKIE_DOMAIN       | Cookie domain                  | (empty)              |
-| PALETTE_ENV         | Environment name               | UAT                  |
+| Variable                    | Description                    | Default              |
+|-----------------------------|--------------------------------|----------------------|
+| SPRING_PROFILES_ACTIVE        | Active profiles               | dev                  |
+| REDIS_HOST                  | Redis hostname                 | localhost            |
+| REDIS_PORT                  | Redis port                     | 6379                 |
+| DB_HOST                     | PostgreSQL hostname            | localhost            |
+| DB_PORT                     | PostgreSQL port                | 5432                 |
+| EIDP_CLIENT_ID              | OAuth2 client ID               | palette-bff          |
+| EIDP_CLIENT_SECRET          | OAuth2 client secret           | (required)           |
+| EIDP_AUTHORIZATION_URI      | eIDP authorization endpoint    | https://eidp.company.com/authorize |
+| EIDP_TOKEN_URI              | eIDP token endpoint            | https://eidp.company.com/token |
+| EIDP_JWK_SET_URI            | eIDP JWK Set endpoint          | https://eidp.company.com/jwks |
+| EIDP_USER_INFO_URI          | eIDP UserInfo endpoint         | https://eidp.company.com/userinfo |
+| EIDP_LOGOUT_URI             | eIDP end_session_endpoint      | (empty)              |
+| EIDP_POST_LOGOUT_REDIRECT_URI | Post-logout redirect URI     | http://localhost:8080|
+| CORS_ORIGINS                | Allowed CORS origins           | http://localhost:3000|
+| COOKIE_DOMAIN               | Cookie domain                  | (empty)              |
+| PALETTE_ENV                 | Environment name               | UAT                  |
 
 ## 13. React Integration Contract
 
@@ -268,10 +323,11 @@ React applications consume only these endpoints:
 ```typescript
 // Authentication
 GET  /palette/api/v1/auth/session   // Check auth status
-POST /palette/api/v1/auth/logout    // Logout
+GET  /palette/api/v1/auth/me        // User info from eIDP UserInfo endpoint
+POST /palette/api/v1/auth/logout    // Logout (returns eIDP logout URL)
 
 // User Context
-GET  /palette/api/v1/context        // Current user info
+GET  /palette/api/v1/context        // Current user info + environment
 
 // Backend Gateway
 ANY  /palette/api/v1/backend/**     // Proxy to backend services

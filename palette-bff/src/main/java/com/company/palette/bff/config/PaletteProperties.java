@@ -14,6 +14,8 @@ public class PaletteProperties {
     private Application application = new Application();
     private Security security = new Security();
     private Gateway gateway = new Gateway();
+    private Eidp eidp = new Eidp();
+    private Session session = new Session();
 
     @Data
     public static class Application {
@@ -57,5 +59,19 @@ public class PaletteProperties {
         private String name;
         private String path;
         private String target;
+    }
+
+    @Data
+    public static class Eidp {
+        /** eIDP end_session_endpoint for OIDC RP-Initiated Logout */
+        private String logoutUri = "";
+        /** Post-logout redirect URI (where eIDP redirects back after logout) */
+        private String postLogoutRedirectUri = "";
+    }
+
+    @Data
+    public static class Session {
+        /** Session store type: redis or memory */
+        private String storeType = "redis";
     }
 }

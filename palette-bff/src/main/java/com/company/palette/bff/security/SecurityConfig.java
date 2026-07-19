@@ -65,16 +65,9 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/palette/api/v1/auth/login")
-            )
-            .logout(logout -> logout
-                .logoutUrl("/palette/api/v1/auth/logout")
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"success\":true}");
-                })
-                .deleteCookies(properties.getSecurity().getCookie().getName())
-                .invalidateHttpSession(true)
             );
+        // Note: logout is handled by AuthController's POST /palette/api/v1/auth/logout
+        // which includes eIDP logout integration and audit logging
 
         return http.build();
     }

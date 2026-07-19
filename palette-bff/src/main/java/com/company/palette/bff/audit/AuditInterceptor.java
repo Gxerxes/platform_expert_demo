@@ -19,6 +19,7 @@ public class AuditInterceptor extends OncePerRequestFilter {
 
     private static final List<String> AUDIT_PATHS = List.of(
             "/palette/api/v1/auth/",
+            "/palette/api/v1/auth/me",
             "/palette/api/v1/context",
             "/palette/api/v1/backend/"
     );

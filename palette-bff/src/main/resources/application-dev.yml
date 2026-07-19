@@ -23,6 +23,9 @@ palette:
       allowed-origins: http://localhost:3000
   session:
     store-type: memory
+  eidp:
+    logout-uri: http://localhost:8080/dev/end-session
+    post-logout-redirect-uri: http://localhost:3000
 
 logging:
   level:

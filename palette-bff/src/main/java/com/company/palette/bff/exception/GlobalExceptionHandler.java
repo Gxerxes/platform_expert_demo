@@ -14,12 +14,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.company.palette.bff.auth.UserInfoException;
 import com.company.palette.bff.tracing.TracingContext;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(UserInfoException.class)
+    public ResponseEntity<ErrorResponse> handleUserInfoException(UserInfoException ex) {
+        log.warn("UserInfo retrieval failed: {}", ex.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.UNAUTHORIZED.getHttpStatus())
+                .body(buildErrorResponse(ErrorCode.UNAUTHORIZED, ex.getMessage()));
+    }
 
     @ExceptionHandler(PaletteException.class)
     public ResponseEntity<ErrorResponse> handlePaletteException(PaletteException ex) {
