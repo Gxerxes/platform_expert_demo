@@ -70,6 +70,7 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/palette/api/v1/auth/login")
+                .defaultSuccessUrl(properties.getSecurity().getFrontendUrl(), true)
             );
         // Note: logout is handled by AuthController's POST /palette/api/v1/auth/logout
         // which includes eIDP logout integration and audit logging

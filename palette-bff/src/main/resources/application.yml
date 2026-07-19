@@ -62,6 +62,7 @@ palette:
     environment: ${PALETTE_ENV:UAT}
     build-time: ${BUILD_TIME:unknown}
   security:
+    frontend-url: ${FRONTEND_URL:http://localhost:3000}
     cookie:
       name: PALETTE_SESSION
       domain: ${COOKIE_DOMAIN:}

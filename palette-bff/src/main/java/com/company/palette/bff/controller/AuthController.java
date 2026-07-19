@@ -126,6 +126,9 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication != null ? authentication.getName() : "anonymous";
 
+        // IMPORTANT: Extract id_token BEFORE session invalidation clears the security context
+        String idTokenHint = eidpLogoutService.extractIdTokenHint();
+
         // 1. Invalidate HTTP session
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -139,8 +142,8 @@ public class AuthController {
         response.setHeader("Set-Cookie",
                 "PALETTE_SESSION=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax");
 
-        // 4. Perform eIDP logout (generate logout URL)
-        String eidpLogoutUrl = eidpLogoutService.performEidpLogout();
+        // 4. Perform eIDP logout (generate logout URL with pre-extracted id_token_hint)
+        String eidpLogoutUrl = eidpLogoutService.performEidpLogout(idTokenHint);
 
         // 5. Record audit
         auditService.recordLogout(userId, TracingContext.getRequestId(), getClientIp(request));

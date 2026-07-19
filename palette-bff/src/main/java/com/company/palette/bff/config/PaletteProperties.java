@@ -29,6 +29,8 @@ public class PaletteProperties {
     public static class Security {
         private Cookie cookie = new Cookie();
         private Cors cors = new Cors();
+        /** Frontend application URL for post-login redirect */
+        private String frontendUrl = "http://localhost:3000";
     }
 
     @Data

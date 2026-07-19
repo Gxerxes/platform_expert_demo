@@ -33,27 +33,15 @@ public class EidpLogoutService {
      *
      * The frontend should redirect the browser to this URL to complete SSO logout.
      *
+     * @param idTokenHint the ID token value to include as hint (extract before session invalidation)
      * @return the eIDP logout URL if configured, null otherwise
      */
-    public String performEidpLogout() {
+    public String performEidpLogout(String idTokenHint) {
         String logoutUri = properties.getEidp().getLogoutUri();
 
         if (logoutUri == null || logoutUri.isBlank()) {
             log.info("eIDP logout URI not configured, skipping eIDP logout");
             return null;
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String idTokenHint = null;
-        if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
-            // Extract ID token from the OAuth2AuthenticationToken's OidcUser principal
-            if (oauthToken.getPrincipal() instanceof OidcUser oidcUser) {
-                OidcIdToken idToken = oidcUser.getIdToken();
-                if (idToken != null) {
-                    idTokenHint = idToken.getTokenValue();
-                }
-            }
         }
 
         // Build the logout URL with id_token_hint and post_logout_redirect_uri
@@ -72,6 +60,26 @@ public class EidpLogoutService {
         log.info("eIDP logout URL generated for end_session_endpoint: {}", logoutUri);
 
         return eidpLogoutUrl;
+    }
+
+    /**
+     * Extracts the id_token from the current authentication.
+     * Must be called BEFORE session invalidation / security context clearing.
+     *
+     * @return the id_token value, or null if not available
+     */
+    public String extractIdTokenHint() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
+            if (oauthToken.getPrincipal() instanceof OidcUser oidcUser) {
+                OidcIdToken idToken = oidcUser.getIdToken();
+                if (idToken != null) {
+                    return idToken.getTokenValue();
+                }
+            }
+        }
+        log.warn("Unable to extract id_token_hint: no OAuth2AuthenticationToken or OidcUser available");
+        return null;
     }
 
     /**
