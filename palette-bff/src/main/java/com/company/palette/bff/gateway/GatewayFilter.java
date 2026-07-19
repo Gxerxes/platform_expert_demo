@@ -14,8 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -38,15 +39,15 @@ public class GatewayFilter extends OncePerRequestFilter {
     private static final String BACKEND_PATH_PREFIX = "/palette/api/v1/backend/";
 
     private final PaletteProperties properties;
-    private final OAuth2AuthorizedClientService authorizedClientService;
+    private final OAuth2AuthorizedClientManager authorizedClientManager;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
 
     public GatewayFilter(PaletteProperties properties,
-                         OAuth2AuthorizedClientService authorizedClientService,
+                         OAuth2AuthorizedClientManager authorizedClientManager,
                          ObjectMapper objectMapper) {
         this.properties = properties;
-        this.authorizedClientService = authorizedClientService;
+        this.authorizedClientManager = authorizedClientManager;
         this.objectMapper = objectMapper;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(properties.getGateway().getConnectTimeout()))
@@ -139,8 +140,14 @@ public class GatewayFilter extends OncePerRequestFilter {
             String userId = oauthToken.getName();
             builder.header("X-User-ID", userId);
 
-            OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
-                    oauthToken.getAuthorizedClientRegistrationId(), userId);
+            // Use OAuth2AuthorizedClientManager which automatically refreshes expired tokens
+            OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                    .withClientRegistrationId(oauthToken.getAuthorizedClientRegistrationId())
+                    .principal(userId)
+                    .build();
+
+            OAuth2AuthorizedClient authorizedClient =
+                    authorizedClientManager.authorize(authorizeRequest);
 
             if (authorizedClient != null && authorizedClient.getAccessToken() != null) {
                 builder.header("Authorization", "Bearer " + authorizedClient.getAccessToken().getTokenValue());

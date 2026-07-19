@@ -11,6 +11,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.company.palette.bff.config.PaletteProperties;
+import com.company.palette.bff.session.TokenRefreshFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -19,13 +20,16 @@ public class SecurityConfig {
     private final JsonAuthenticationEntryPoint authenticationEntryPoint;
     private final JsonAccessDeniedHandler accessDeniedHandler;
     private final PaletteProperties properties;
+    private final TokenRefreshFilter tokenRefreshFilter;
 
     public SecurityConfig(JsonAuthenticationEntryPoint authenticationEntryPoint,
                           JsonAccessDeniedHandler accessDeniedHandler,
-                          PaletteProperties properties) {
+                          PaletteProperties properties,
+                          TokenRefreshFilter tokenRefreshFilter) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.properties = properties;
+        this.tokenRefreshFilter = tokenRefreshFilter;
     }
 
     @Bean
@@ -68,6 +72,11 @@ public class SecurityConfig {
             );
         // Note: logout is handled by AuthController's POST /palette/api/v1/auth/logout
         // which includes eIDP logout integration and audit logging
+
+        // Register TokenRefreshFilter after OAuth2 login processing
+        // so that authentication is established before token refresh is attempted
+        http.addFilterAfter(tokenRefreshFilter,
+                org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter.class);
 
         return http.build();
     }

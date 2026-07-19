@@ -9,8 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -24,13 +25,13 @@ public class UserInfoService {
 
     private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
 
-    private final OAuth2AuthorizedClientService authorizedClientService;
+    private final OAuth2AuthorizedClientManager authorizedClientManager;
     private final RestClient restClient;
     private final String userInfoUri;
 
-    public UserInfoService(OAuth2AuthorizedClientService authorizedClientService,
+    public UserInfoService(OAuth2AuthorizedClientManager authorizedClientManager,
                            @Value("${spring.security.oauth2.client.provider.eidp.user-info-uri}") String userInfoUri) {
-        this.authorizedClientService = authorizedClientService;
+        this.authorizedClientManager = authorizedClientManager;
         this.userInfoUri = userInfoUri;
         this.restClient = RestClient.builder()
                 .baseUrl(userInfoUri)
@@ -52,8 +53,13 @@ public class UserInfoService {
         String registrationId = oauthToken.getAuthorizedClientRegistrationId();
         String principalName = oauthToken.getName();
 
+        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                .withClientRegistrationId(registrationId)
+                .principal(principalName)
+                .build();
+
         OAuth2AuthorizedClient authorizedClient =
-                authorizedClientService.loadAuthorizedClient(registrationId, principalName);
+                authorizedClientManager.authorize(authorizeRequest);
 
         if (authorizedClient == null || authorizedClient.getAccessToken() == null) {
             throw new UserInfoException("No access token available for user: " + principalName);
