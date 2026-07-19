@@ -4,17 +4,19 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 /**
  * Service that calls eIDP's UserInfo endpoint to retrieve real-time user information.
@@ -26,16 +28,14 @@ public class UserInfoService {
     private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
 
     private final OAuth2AuthorizedClientManager authorizedClientManager;
+    private final ClientRegistrationRepository clientRegistrationRepository;
     private final RestClient restClient;
-    private final String userInfoUri;
 
     public UserInfoService(OAuth2AuthorizedClientManager authorizedClientManager,
-                           @Value("${spring.security.oauth2.client.provider.eidp.user-info-uri}") String userInfoUri) {
+                           ClientRegistrationRepository clientRegistrationRepository) {
         this.authorizedClientManager = authorizedClientManager;
-        this.userInfoUri = userInfoUri;
-        this.restClient = RestClient.builder()
-                .baseUrl(userInfoUri)
-                .build();
+        this.clientRegistrationRepository = clientRegistrationRepository;
+        this.restClient = RestClient.builder().build();
     }
 
     /**
@@ -65,18 +65,27 @@ public class UserInfoService {
             throw new UserInfoException("No access token available for user: " + principalName);
         }
 
-        return fetchUserInfo(authorizedClient.getAccessToken().getTokenValue());
+        // Get userinfo URI from ClientRegistration (auto-discovered via issuer-uri)
+        var clientRegistration = clientRegistrationRepository.findByRegistrationId(registrationId);
+        if (clientRegistration == null || clientRegistration.getProviderDetails().getUserInfoEndpoint().getUri() == null) {
+            throw new UserInfoException("UserInfo endpoint not configured for registration: " + registrationId);
+        }
+        String userInfoUri = clientRegistration.getProviderDetails().getUserInfoEndpoint().getUri();
+
+        return fetchUserInfo(userInfoUri, authorizedClient.getAccessToken().getTokenValue());
     }
 
     /**
      * Fetches user info from eIDP using the provided access token.
      *
+     * @param userInfoUri the eIDP userinfo endpoint
      * @param accessToken OAuth2 access token
      * @return UserInfo from eIDP
      */
-    public UserInfo fetchUserInfo(String accessToken) {
+    public UserInfo fetchUserInfo(String userInfoUri, String accessToken) {
         try {
             Map<String, Object> response = restClient.get()
+                    .uri(userInfoUri)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()

@@ -1,3 +1,9 @@
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false
+
 spring:
   session:
     store-type: none
@@ -8,12 +14,12 @@ spring:
   security:
     oauth2:
       client:
+        registration:
+          eidp:
+            client-secret: palette-secret
         provider:
           eidp:
-            authorization-uri: http://localhost:8080/dev/authorize
-            token-uri: http://localhost:8080/dev/token
-            jwk-set-uri: http://localhost:8080/dev/jwks
-            user-info-uri: http://localhost:8080/dev/userinfo
+            issuer-uri: http://localhost:8180/realms/palette
 
 palette:
   application:
@@ -24,7 +30,7 @@ palette:
   session:
     store-type: memory
   eidp:
-    logout-uri: http://localhost:8080/dev/end-session
+    logout-uri: http://localhost:8180/realms/palette/protocol/openid-connect/logout
     post-logout-redirect-uri: http://localhost:3000
 
 logging:

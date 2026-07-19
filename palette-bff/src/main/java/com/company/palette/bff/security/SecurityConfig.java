@@ -52,6 +52,7 @@ public class SecurityConfig {
                     "/palette/api/v1/system/health/**",
                     "/palette/api/v1/system/info",
                     "/palette/api/v1/auth/login",
+                    "/palette/api/v1/auth/session",
                     "/login/oauth2/**",
                     "/palette/api-docs/**",
                     "/palette/swagger-ui/**",

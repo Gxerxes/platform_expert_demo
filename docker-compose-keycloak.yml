@@ -1,0 +1,36 @@
+version: '3.8'
+
+# ──────────────────────────────────────────────────────────────
+# Palette Local Dev — Keycloak Demo IdP
+# ──────────────────────────────────────────────────────────────
+# Start:   docker compose -f docker-compose-keycloak.yml up -d
+# Console: http://localhost:8180  (admin / admin)
+# Realm:   palette
+# Client:  palette-bff (confidential, secret: palette-secret)
+# Test User: admin / admin123
+# ──────────────────────────────────────────────────────────────
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: palette-keycloak
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - "8180:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8080
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    volumes:
+      - ./keycloak/palette-realm.json:/opt/keycloak/data/import/palette-realm.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/palette || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped

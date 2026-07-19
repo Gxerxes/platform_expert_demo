@@ -13,16 +13,19 @@ services:
       - DB_PORT=5432
       - DB_USERNAME=palette
       - DB_PASSWORD=palette
-      - EIDP_CLIENT_ID=${EIDP_CLIENT_ID}
-      - EIDP_CLIENT_SECRET=${EIDP_CLIENT_SECRET}
-      - EIDP_ISSUER_URI=${EIDP_ISSUER_URI}
+      - EIDP_CLIENT_ID=${EIDP_CLIENT_ID:-palette-bff}
+      - EIDP_CLIENT_SECRET=${EIDP_CLIENT_SECRET:-palette-secret}
+      - EIDP_ISSUER_URI=${EIDP_ISSUER_URI:-http://keycloak:8080/realms/palette}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
       - COOKIE_DOMAIN=${COOKIE_DOMAIN:-}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
       - PALETTE_ENV=${PALETTE_ENV:-UAT}
     depends_on:
       redis:
         condition: service_healthy
       postgres:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
     networks:
       - palette-network
@@ -58,6 +61,32 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - palette-network
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: palette-keycloak
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - "8180:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8080
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    volumes:
+      - ../keycloak/palette-realm.json:/opt/keycloak/data/import/palette-realm.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/palette || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - palette-network
     restart: unless-stopped
