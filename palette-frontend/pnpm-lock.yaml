@@ -185,6 +185,9 @@ importers:
 
   packages/platform-router:
     dependencies:
+      '@palette/api':
+        specifier: workspace:*
+        version: link:../platform-api
       '@palette/auth':
         specifier: workspace:*
         version: link:../platform-auth
@@ -204,6 +207,9 @@ importers:
 
   packages/platform-ui:
     dependencies:
+      '@palette/api':
+        specifier: workspace:*
+        version: link:../platform-api
       react:
         specifier: ^18.3.1
         version: 18.3.1

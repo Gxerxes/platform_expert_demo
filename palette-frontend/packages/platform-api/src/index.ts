@@ -1,5 +1,7 @@
 export { paletteApi, setUnauthorizedHandler, setErrorHandler } from './client';
 export type { ApiError, ApiResponse } from './client';
+export { PlatformErrorCode, classifyError } from './errors';
+export type { PlatformError } from './errors';
 export {
   checkSession,
   login,

@@ -8,6 +8,7 @@ import type { PaletteRouteConfig } from '@palette/core';
 
 const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const ErrorPageRoute = lazy(() => import('../pages/ErrorPageRoute'));
 
 // ─── Route configuration ─────────────────────────────────
 
