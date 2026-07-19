@@ -1,0 +1,18 @@
+{
+  "name": "palette-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Palette Enterprise Frontend Platform",
+  "scripts": {
+    "dev": "pnpm --filter palette-portal dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

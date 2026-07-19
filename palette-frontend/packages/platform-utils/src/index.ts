@@ -1,0 +1,59 @@
+/**
+ * Platform utility functions and helpers.
+ */
+
+/**
+ * Safely parse JSON with a fallback value.
+ */
+export function safeJsonParse<T>(json: string, fallback: T): T {
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+/**
+ * Check if a value is not null/undefined.
+ */
+export function isDefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
+}
+
+/**
+ * Create a deferred/pending promise.
+ */
+export function createDeferred<T>(): {
+  promise: Promise<T>;
+  resolve: (value: T) => void;
+  reject: (reason?: unknown) => void;
+} {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
+/**
+ * Sleep for a given number of milliseconds.
+ */
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Generate a unique ID.
+ */
+export function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+/**
+ * No-operation function.
+ */
+export function noop(): void {
+  // intentionally empty
+}

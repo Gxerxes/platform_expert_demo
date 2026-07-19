@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src", "vite-env.d.ts"],
+  "references": [
+    { "path": "../../packages/platform-core" },
+    { "path": "../../packages/platform-api" },
+    { "path": "../../packages/platform-auth" },
+    { "path": "../../packages/platform-config" },
+    { "path": "../../packages/platform-context" },
+    { "path": "../../packages/platform-layout" },
+    { "path": "../../packages/platform-router" },
+    { "path": "../../packages/platform-ui" },
+    { "path": "../../packages/platform-utils" }
+  ]
+}
