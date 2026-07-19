@@ -49,7 +49,7 @@ Palette BFF serves as the single entry point for all React frontend applications
 | Database         | PostgreSQL 16                 |
 | Cache            | Redis 7                       |
 | API Docs         | OpenAPI 3 + SpringDoc         |
-| Build            | Maven                         |
+| Build            | Gradle 8.10                    |
 | Container        | Docker + Kubernetes-ready     |
 
 ## API Endpoints
@@ -74,7 +74,7 @@ Palette BFF serves as the single entry point for all React frontend applications
 ### Prerequisites
 
 - Java 21+
-- Maven 3.9+
+- Gradle 8.10+ (or use `./gradlew` wrapper)
 - Redis 7+ (for production/docker mode)
 - PostgreSQL 16+ (for production/docker mode)
 
@@ -83,7 +83,7 @@ Palette BFF serves as the single entry point for all React frontend applications
 ```bash
 # Run in dev mode (no Redis required)
 cd palette-bff
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 ### Docker Deployment
@@ -127,13 +127,13 @@ docker-compose up -d
 
 ```bash
 # Compile
-mvn compile
+./gradlew compileJava
 
 # Run tests
-mvn test
+./gradlew test
 
 # Package JAR
-mvn clean package -DskipTests
+./gradlew clean bootJar -x test
 
 # Build Docker image (requires JAR built first)
 docker build -t palette-bff:latest .

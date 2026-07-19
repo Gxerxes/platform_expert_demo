@@ -23,7 +23,7 @@ Palette BFF serves as the single entry point for all React frontend applications
 
 ```bash
 cd palette-bff
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 Access Swagger UI: http://localhost:8080/palette/swagger-ui.html

@@ -23,6 +23,7 @@ buildNumber.properties
 # Gradle
 .gradle/
 build/
+!gradle/wrapper/gradle-wrapper.jar
 
 # IDE - IntelliJ IDEA
 .idea/
