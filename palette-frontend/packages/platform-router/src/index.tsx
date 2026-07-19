@@ -1,5 +1,5 @@
 import { Suspense, type ComponentType, type LazyExoticComponent } from 'react';
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { type RouteObject } from 'react-router-dom';
 import { useAuth } from '@palette/auth';
 
 // ─── Loading Fallback ────────────────────────────────────
@@ -45,7 +45,11 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!authenticated) {
-    return <Navigate to="/palette/api/v1/auth/login" replace />;
+    // Use window.location.href for full-page redirect to backend.
+    // Using React Router's <Navigate> would cause a brief flash of NotFoundPage
+    // because the BFF URL is not a frontend route.
+    window.location.href = '/palette/api/v1/auth/login';
+    return <DefaultLoading />;
   }
 
   return <>{children}</>;
