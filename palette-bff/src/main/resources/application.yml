@@ -1,0 +1,100 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        name: PALETTE_SESSION
+        http-only: true
+        secure: true
+        same-site: Lax
+      timeout: 30m
+
+spring:
+  application:
+    name: palette-bff
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  session:
+    store-type: redis
+    redis:
+      namespace: palette:session
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5000ms
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/palette
+    username: ${DB_USERNAME:palette}
+    password: ${DB_PASSWORD:palette}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          eidp:
+            client-id: ${EIDP_CLIENT_ID:palette-bff}
+            client-secret: ${EIDP_CLIENT_SECRET:}
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-name: eIDP
+        provider:
+          eidp:
+            issuer-uri: ${EIDP_ISSUER_URI:https://eidp.company.com}
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+palette:
+  application:
+    name: palette-bff
+    version: 1.0.0
+    environment: ${PALETTE_ENV:UAT}
+    build-time: ${BUILD_TIME:unknown}
+  security:
+    cookie:
+      name: PALETTE_SESSION
+      domain: ${COOKIE_DOMAIN:}
+      max-age: 28800
+    cors:
+      allowed-origins: ${CORS_ORIGINS:http://localhost:3000}
+      allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+  gateway:
+    connect-timeout: 5000
+    read-timeout: 30000
+    routes: []
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  api-docs:
+    path: /palette/api-docs
+  swagger-ui:
+    path: /palette/swagger-ui.html
+
+logging:
+  level:
+    root: INFO
+    com.company.palette.bff: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [requestId=%X{requestId}] %-5level %logger{36} - %msg%n"

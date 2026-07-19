@@ -1,0 +1,22 @@
+spring:
+  session:
+    store-type: none
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.oauth2.OAuth2ClientAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+
+palette:
+  application:
+    name: palette-bff
+    version: 1.0.0
+    environment: TEST
+    build-time: test
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: PALETTE_SESSION

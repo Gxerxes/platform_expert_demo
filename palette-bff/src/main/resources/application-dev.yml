@@ -1,0 +1,15 @@
+spring:
+  session:
+    store-type: none
+
+palette:
+  application:
+    environment: DEV
+  security:
+    cors:
+      allowed-origins: http://localhost:3000
+
+logging:
+  level:
+    com.company.palette.bff: DEBUG
+    org.springframework.security: DEBUG

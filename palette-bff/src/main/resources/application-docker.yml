@@ -1,0 +1,31 @@
+spring:
+  session:
+    store-type: redis
+  data:
+    redis:
+      host: redis
+      port: 6379
+  datasource:
+    url: jdbc:postgresql://postgres:5432/palette
+    username: palette
+    password: palette
+  security:
+    oauth2:
+      client:
+        registration:
+          eidp:
+            client-id: ${EIDP_CLIENT_ID}
+            client-secret: ${EIDP_CLIENT_SECRET}
+        provider:
+          eidp:
+            issuer-uri: ${EIDP_ISSUER_URI}
+
+palette:
+  application:
+    environment: ${PALETTE_ENV:UAT}
+  security:
+    cookie:
+      domain: ${COOKIE_DOMAIN}
+      secure: true
+    cors:
+      allowed-origins: ${CORS_ORIGINS}
