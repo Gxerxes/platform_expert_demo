@@ -122,10 +122,10 @@ mvn compile
 # Run tests
 mvn test
 
-# Package
-mvn package
+# Package JAR
+mvn clean package -DskipTests
 
-# Build Docker image
+# Build Docker image (requires JAR built first)
 docker build -t palette-bff:latest .
 ```
 

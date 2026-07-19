@@ -1,20 +1,23 @@
-FROM eclipse-temurin:21-jdk-alpine AS builder
+# ============================================================
+# Palette BFF - Dockerfile
+# ============================================================
+# Build strategy: local Maven build, Docker only packages runtime
+# This avoids downloading dependencies inside the container.
+#
+# Usage:
+#   mvn clean package -DskipTests
+#   docker build -t palette-bff:latest .
+# ============================================================
 
-WORKDIR /app
+ARG REGISTRY=docker.m.daocloud.io
 
-COPY pom.xml .
-COPY src ./src
-
-RUN apk add --no-cache maven && \
-    mvn clean package -DskipTests -B
-
-FROM eclipse-temurin:21-jre-alpine
+FROM ${REGISTRY}/eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
 RUN addgroup -S palette && adduser -S palette -G palette
 
-COPY --from=builder /app/target/*.jar app.jar
+COPY target/*.jar app.jar
 
 RUN chown -R palette:palette /app
 
