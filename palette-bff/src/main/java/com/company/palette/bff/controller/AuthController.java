@@ -51,13 +51,17 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public Map<String, String> login() {
+    public void login(HttpServletResponse response) throws java.io.IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication.getName().equals("anonymousUser"))) {
-            return Map.of("redirect", "/");
+            // Already authenticated — redirect to home
+            response.sendRedirect("/");
+            return;
         }
-        return Map.of("loginUrl", "/oauth2/authorization/eidp");
+        // Redirect to Spring Security OAuth2 authorization endpoint
+        // Spring Security will intercept this and redirect to eIDP login page
+        response.sendRedirect("/oauth2/authorization/eidp");
     }
 
     @GetMapping("/session")
