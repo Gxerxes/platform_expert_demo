@@ -6,10 +6,12 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@ConditionalOnProperty(name = "palette.session.store-type", havingValue = "redis", matchIfMissing = true)
 public class RedisSessionRepository implements SessionRepository {
 
     private static final Logger log = LoggerFactory.getLogger(RedisSessionRepository.class);

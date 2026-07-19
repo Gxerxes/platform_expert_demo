@@ -45,7 +45,11 @@ spring:
             client-name: eIDP
         provider:
           eidp:
-            issuer-uri: ${EIDP_ISSUER_URI:https://eidp.company.com}
+            authorization-uri: ${EIDP_AUTHORIZATION_URI:https://eidp.company.com/authorize}
+            token-uri: ${EIDP_TOKEN_URI:https://eidp.company.com/token}
+            jwk-set-uri: ${EIDP_JWK_SET_URI:https://eidp.company.com/jwks}
+            user-info-uri: ${EIDP_USER_INFO_URI:https://eidp.company.com/userinfo}
+            user-name-attribute: sub
 
   jackson:
     default-property-inclusion: non_null
@@ -75,6 +79,8 @@ palette:
     connect-timeout: 5000
     read-timeout: 30000
     routes: []
+  session:
+    store-type: redis
 
 management:
   endpoints:

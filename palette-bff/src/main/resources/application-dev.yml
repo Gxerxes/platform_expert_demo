@@ -1,6 +1,19 @@
 spring:
   session:
     store-type: none
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  security:
+    oauth2:
+      client:
+        provider:
+          eidp:
+            authorization-uri: http://localhost:8080/dev/authorize
+            token-uri: http://localhost:8080/dev/token
+            jwk-set-uri: http://localhost:8080/dev/jwks
+            user-info-uri: http://localhost:8080/dev/userinfo
 
 palette:
   application:
@@ -8,6 +21,8 @@ palette:
   security:
     cors:
       allowed-origins: http://localhost:3000
+  session:
+    store-type: memory
 
 logging:
   level:

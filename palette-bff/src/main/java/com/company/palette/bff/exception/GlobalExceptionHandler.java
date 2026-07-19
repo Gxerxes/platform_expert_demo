@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.company.palette.bff.tracing.TracingContext;
 
@@ -69,6 +70,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.NOT_FOUND.getHttpStatus())
                 .body(buildErrorResponse(ErrorCode.NOT_FOUND, "Resource not found"));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex) {
+        return ResponseEntity
+                .status(ErrorCode.NOT_FOUND.getHttpStatus())
+                .body(buildErrorResponse(ErrorCode.NOT_FOUND, "Resource not found: " + ex.getResourcePath()));
     }
 
     @ExceptionHandler(Exception.class)
