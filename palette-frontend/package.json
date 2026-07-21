@@ -5,6 +5,7 @@
   "description": "Palette Enterprise Frontend Platform",
   "scripts": {
     "dev": "pnpm --filter palette-portal dev",
+    "dev:demo": "pnpm --filter palette-demo dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",

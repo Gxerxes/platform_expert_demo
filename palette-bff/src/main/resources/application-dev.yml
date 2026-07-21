@@ -29,6 +29,11 @@ palette:
       allowed-origins: https://localhost:3000
   session:
     store-type: memory
+  gateway:
+    routes:
+      - name: demo-service
+        path: /backend/demo/**
+        target: http://localhost:8081
   eidp:
     logout-uri: http://localhost:8180/realms/palette/protocol/openid-connect/logout
     post-logout-redirect-uri: https://localhost:3000
