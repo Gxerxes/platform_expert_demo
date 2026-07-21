@@ -1,0 +1,21 @@
+{
+  "name": "create-palette-app",
+  "version": "1.0.0",
+  "description": "Scaffold CLI for Palette business applications",
+  "type": "module",
+  "bin": {
+    "create-palette-app": "./bin/create-palette-app.js"
+  },
+  "files": [
+    "bin/",
+    "src/"
+  ],
+  "keywords": [
+    "palette",
+    "scaffold",
+    "cli",
+    "enterprise"
+  ],
+  "license": "UNLICENSED",
+  "private": true
+}

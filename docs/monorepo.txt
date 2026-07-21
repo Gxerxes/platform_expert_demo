@@ -1,0 +1,412 @@
+目前一个前端一个单独的project，如何把他转成packages这种monorepo
+如果你现在是一个独立 React 前端项目，想演进成 Palette 这种 packages + apps 的 Monorepo 架构，建议不要一次性重构，而是采用 Incremental Migration（渐进式迁移）。
+目标结构：
+palette-ui-platform
+│
+├── apps
+│   ├── demo-app              # 示例业务应用
+│   └── existing-app          # 现在的前端项目迁移过来
+│
+├── packages
+│   ├── ui-core               # 公共组件
+│   ├── layout                # Header/Sidebar/Layout
+│   ├── security              # Auth/Permission
+│   ├── api-client            # Axios封装
+│   ├── theme                 # MUI Theme
+│   ├── navigation            # Menu/Route
+│   └── sdk                   # 对业务暴露入口
+│
+├── package.json
+├── pnpm-workspace.yaml
+├── turbo.json (可选)
+└── .gitlab-ci.yml
+
+--------------------------------------------------------------------------------
+
+Step 1：创建新的 Monorepo 仓库
+新建 GitLab Repository：
+palette-ui-platform
+
+初始化：
+mkdir palette-ui-platform
+
+cd palette-ui-platform
+
+pnpm init
+
+安装 workspace：
+pnpm add -D turbo
+
+--------------------------------------------------------------------------------
+
+Step 2：创建目录结构
+mkdir apps
+mkdir packages
+
+最终：
+palette-ui-platform
+
+├── apps
+└── packages
+
+--------------------------------------------------------------------------------
+
+Step 3：配置 pnpm workspace
+创建：
+pnpm-workspace.yaml
+
+内容：
+packages:
+
+  - apps/*
+  - packages/*
+
+--------------------------------------------------------------------------------
+
+Step 4：迁移原项目到 apps
+假设现在：
+old-project
+
+src
+package.json
+vite.config.ts
+
+移动：
+palette-ui-platform
+
+apps
+
+ └── clearing-app
+
+        src
+        package.json
+        vite.config.ts
+
+现在：
+apps/clearing-app
+
+还是一个完整 React Application。
+测试：
+cd apps/clearing-app
+
+pnpm install
+
+pnpm dev
+
+应该保持原功能。
+--------------------------------------------------------------------------------
+
+Step 5：识别可以抽离的代码
+不要马上拆。
+先分析：
+现在项目：
+src
+
+├── components
+├── layouts
+├── hooks
+├── utils
+├── services
+├── auth
+├── theme
+├── routes
+
+分类：
+原目录迁移目标components/commonpackages/ui-corelayoutspackages/layoutauthpackages/securityapipackages/api-clientthemepackages/themeroutes/menupackages/navigationshared hookspackages/sdk
+
+--------------------------------------------------------------------------------
+
+Step 6：创建第一个 Package
+例如：
+ui-core
+创建：
+packages/ui-core
+
+结构：
+ui-core
+
+├── src
+│
+│── Button
+│    └── index.tsx
+│
+│── Table
+│
+│── index.ts
+│
+├── package.json
+└── tsconfig.json
+
+--------------------------------------------------------------------------------
+
+package.json:
+{
+"name":"@company/palette-ui-core",
+
+"version":"1.0.0",
+
+"main":"dist/index.js",
+
+"types":"dist/index.d.ts",
+
+"scripts":{
+ "build":"tsc"
+}
+}
+
+--------------------------------------------------------------------------------
+
+Step 7：业务项目引用 Package
+apps/clearing-app/package.json
+增加：
+{
+"dependencies":{
+
+"@company/palette-ui-core":
+"workspace:*"
+
+}
+}
+
+安装：
+pnpm install
+
+使用：
+import {
+ Button
+}
+from '@company/palette-ui-core'
+
+--------------------------------------------------------------------------------
+
+Step 8：抽离 Layout
+原：
+src/layout/AppLayout.tsx
+
+移动：
+packages/layout/src/Layout.tsx
+
+变成：
+import {
+ PaletteLayout
+}
+from "@company/palette-layout"
+
+
+function App(){
+
+return (
+
+<PaletteLayout>
+
+ <Routes/>
+
+</PaletteLayout>
+
+)
+
+}
+
+--------------------------------------------------------------------------------
+
+Step 9：抽离 Security
+原：
+src/auth/AuthProvider.tsx
+
+移动：
+packages/security
+
+提供：
+<AuthProvider>
+
+<App/>
+
+</AuthProvider>
+
+业务不再关心：
+-
+token
+
+-
+session
+
+-
+login
+
+-
+logout
+
+--------------------------------------------------------------------------------
+
+Step 10：增加 SDK 作为统一入口
+最终业务只依赖：
+@company/palette-sdk
+
+例如：
+import {
+
+PaletteApp,
+
+useAuth,
+
+usePermission,
+
+useApi
+
+}
+
+from '@company/palette-sdk'
+
+内部：
+sdk
+
+ |
+ ├── shell
+ ├── security
+ ├── layout
+ ├── api-client
+ └── theme
+
+
+--------------------------------------------------------------------------------
+
+Step 11：GitLab CI 调整
+以前：
+project
+
+build
+test
+deploy
+
+
+现在：
+packages
+
+   build shared libs
+
+
+apps
+
+   build applications
+
+
+pipeline:
+stages:
+
+- install
+- build-package
+- build-app
+
+
+build-package:
+
+ script:
+
+  - pnpm --filter "./packages/*" build
+
+
+build-app:
+
+ script:
+
+  - pnpm --filter "./apps/*" build
+
+
+--------------------------------------------------------------------------------
+
+推荐迁移顺序（非常重要）
+不要：
+❌ 一次拆全部
+建议：
+Sprint 1
+迁移 Monorepo
+old app
+
+↓
+
+apps/existing-app
+
+保持 100% 可运行。
+--------------------------------------------------------------------------------
+
+Sprint 2
+抽：
+layout
+theme
+components
+
+形成：
+packages/ui-core
+packages/layout
+packages/theme
+
+--------------------------------------------------------------------------------
+
+Sprint 3
+抽：
+auth
+api
+permission
+
+形成：
+packages/security
+packages/api-client
+
+--------------------------------------------------------------------------------
+
+Sprint 4
+建立：
+palette-sdk
+
+业务最终：
+import {
+ PaletteApp
+}
+from '@company/palette-sdk'
+
+--------------------------------------------------------------------------------
+
+最终效果
+以前：
+Clearing App
+
+components
+auth
+layout
+api
+theme
+
+全部自己维护
+
+
+之后：
+                Palette Platform
+
+
+             @palette/sdk
+
+                  |
+
+ ------------------------------------------------
+
+ ui-core
+ layout
+ security
+ api-client
+ theme
+ navigation
+
+
+                  |
+
+          Business Applications
+
+
+        Clearing
+        Settlement
+        Reporting
+
+
+--------------------------------------------------------------------------------
+
+对于你现在 Palette 的情况，我建议不要新建 packages 再开发，而是先把现有前端迁移进 apps，然后逐步抽公共能力。这是企业内部 Platform Team 最安全的演进路线。
