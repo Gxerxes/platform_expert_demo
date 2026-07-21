@@ -1,4 +1,4 @@
-export { paletteApi, setUnauthorizedHandler, setErrorHandler } from './client';
+export { paletteApi, setUnauthorizedHandler, setErrorHandler, setLoggingOut } from './client';
 export type { ApiError, ApiResponse } from './client';
 export { PlatformErrorCode, classifyError } from './errors';
 export type { PlatformError } from './errors';

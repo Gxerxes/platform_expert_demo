@@ -36,6 +36,13 @@ let onError: ErrorHandler = () => {
 };
 
 /**
+ * Flag to suppress 401 redirects during logout.
+ * When logout is in progress, we don't want the interceptor
+ * to redirect to login page.
+ */
+let isLoggingOut = false;
+
+/**
  * Set the global unauthorized handler.
  */
 export function setUnauthorizedHandler(handler: UnauthorizedHandler): void {
@@ -47,6 +54,14 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler): void {
  */
 export function setErrorHandler(handler: ErrorHandler): void {
   onError = handler;
+}
+
+/**
+ * Set the logging out flag. When true, 401 responses will not trigger
+ * the unauthorized handler (prevents redirect to login during logout).
+ */
+export function setLoggingOut(value: boolean): void {
+  isLoggingOut = value;
 }
 
 /**
@@ -82,7 +97,10 @@ paletteApi.interceptors.response.use(
 
       switch (status) {
         case 401:
-          onUnauthorized();
+          // Skip redirect during logout flow
+          if (!isLoggingOut) {
+            onUnauthorized();
+          }
           break;
         case 403:
           // Forbidden - user lacks permission

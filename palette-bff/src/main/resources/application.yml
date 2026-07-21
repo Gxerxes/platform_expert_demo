@@ -62,13 +62,13 @@ palette:
     environment: ${PALETTE_ENV:UAT}
     build-time: ${BUILD_TIME:unknown}
   security:
-    frontend-url: ${FRONTEND_URL:http://localhost:3000}
+    frontend-url: ${FRONTEND_URL:https://localhost:3000}
     cookie:
       name: PALETTE_SESSION
       domain: ${COOKIE_DOMAIN:}
       max-age: 28800
     cors:
-      allowed-origins: ${CORS_ORIGINS:http://localhost:3000}
+      allowed-origins: ${CORS_ORIGINS:https://localhost:3000}
       allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
       allowed-headers: "*"
       allow-credentials: true
@@ -81,7 +81,7 @@ palette:
     store-type: redis
   eidp:
     logout-uri: ${EIDP_LOGOUT_URI:}
-    post-logout-redirect-uri: ${EIDP_POST_LOGOUT_REDIRECT_URI:http://localhost:8080}
+    post-logout-redirect-uri: ${EIDP_POST_LOGOUT_REDIRECT_URI:https://localhost:3000}
 
 management:
   endpoints:

@@ -1,15 +1,14 @@
 package com.company.palette.bff.controller;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +17,7 @@ import com.company.palette.bff.auth.UserInfo;
 import com.company.palette.bff.auth.UserInfoException;
 import com.company.palette.bff.auth.UserInfoService;
 import com.company.palette.bff.audit.AuditService;
+import com.company.palette.bff.config.PaletteProperties;
 import com.company.palette.bff.common.ApiResponse;
 import com.company.palette.bff.exception.ErrorCode;
 import com.company.palette.bff.exception.PaletteException;
@@ -39,15 +39,18 @@ public class AuthController {
     private final UserInfoService userInfoService;
     private final EidpLogoutService eidpLogoutService;
     private final AuditService auditService;
+    private final PaletteProperties properties;
 
     public AuthController(SessionRepository sessionRepository,
                           UserInfoService userInfoService,
                           EidpLogoutService eidpLogoutService,
-                          AuditService auditService) {
+                          AuditService auditService,
+                          PaletteProperties properties) {
         this.sessionRepository = sessionRepository;
         this.userInfoService = userInfoService;
         this.eidpLogoutService = eidpLogoutService;
         this.auditService = auditService;
+        this.properties = properties;
     }
 
     @GetMapping("/login")
@@ -55,8 +58,8 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication.getName().equals("anonymousUser"))) {
-            // Already authenticated — redirect to home
-            response.sendRedirect("/");
+            // Already authenticated — redirect to dashboard
+            response.sendRedirect(properties.getSecurity().getFrontendUrl() + "/dashboard");
             return;
         }
         // Redirect to Spring Security OAuth2 authorization endpoint
@@ -109,29 +112,20 @@ public class AuthController {
     }
 
     /**
-     * POST /palette/api/v1/auth/logout
+     * GET /palette/api/v1/auth/logout
      *
-     * Logout flow:
-     * 1. Invalidate Palette BFF session
-     * 2. Remove Redis session
-     * 3. Clear HTTP cookie
-     * 4. Generate eIDP logout URL (if eIDP logout is configured)
-     * 5. Record audit event
-     *
-     * Response includes eIDP logout URL for frontend to redirect if needed.
+     * Simple logout: invalidate session, clear cookie, redirect to landing page.
      */
-    @PostMapping("/logout")
-    public ApiResponse<Map<String, Object>> logout(HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request,
+                       HttpServletResponse response) throws java.io.IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication != null ? authentication.getName() : "anonymous";
-
-        // IMPORTANT: Extract id_token BEFORE session invalidation clears the security context
-        String idTokenHint = eidpLogoutService.extractIdTokenHint();
 
         // 1. Invalidate HTTP session
         HttpSession session = request.getSession(false);
         if (session != null) {
+            log.info("Invalidating session: {}", session.getId());
             session.invalidate();
         }
 
@@ -139,24 +133,21 @@ public class AuthController {
         SecurityContextHolder.clearContext();
 
         // 3. Clear session cookie
-        response.setHeader("Set-Cookie",
-                "PALETTE_SESSION=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax");
+        ResponseCookie cookie = ResponseCookie.from(properties.getSecurity().getCookie().getName(), "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+        log.info("Logout: userId={}, cookie cleared, redirecting to {}", userId, properties.getSecurity().getFrontendUrl());
 
-        // 4. Perform eIDP logout (generate logout URL with pre-extracted id_token_hint)
-        String eidpLogoutUrl = eidpLogoutService.performEidpLogout(idTokenHint);
-
-        // 5. Record audit
+        // 4. Record audit
         auditService.recordLogout(userId, TracingContext.getRequestId(), getClientIp(request));
 
-        // Build response
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", true);
-
-        if (eidpLogoutUrl != null && !eidpLogoutUrl.isBlank()) {
-            result.put("eidpLogoutUrl", eidpLogoutUrl);
-        }
-
-        return ApiResponse.success(result);
+        // 5. Redirect directly to landing page
+        response.sendRedirect(properties.getSecurity().getFrontendUrl());
     }
 
     private String getClientIp(HttpServletRequest request) {

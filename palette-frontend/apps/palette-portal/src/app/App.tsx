@@ -6,6 +6,7 @@ import type { PaletteRouteConfig } from '@palette/core';
 
 // ─── Lazy-loaded pages ───────────────────────────────────
 
+const LandingPage = lazy(() => import('../pages/LandingPage'));
 const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const ErrorPageRoute = lazy(() => import('../pages/ErrorPageRoute'));
@@ -13,13 +14,20 @@ const ErrorPageRoute = lazy(() => import('../pages/ErrorPageRoute'));
 // ─── Route configuration ─────────────────────────────────
 
 const routes: PaletteRouteConfig[] = [
+  // Public landing page (no authentication required)
   {
     path: '/',
+    component: LandingPage as any,
+    protected: false,
+  },
+  // Protected application pages (inside AppShell)
+  {
+    path: '/dashboard',
     component: AppShell as any,
     protected: true,
     children: [
       {
-        path: '/',
+        path: '/dashboard',
         component: DashboardPage,
         protected: true,
       },

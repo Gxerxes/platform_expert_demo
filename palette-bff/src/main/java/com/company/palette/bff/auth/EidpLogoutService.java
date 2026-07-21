@@ -2,6 +2,7 @@ package com.company.palette.bff.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -9,7 +10,6 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.company.palette.bff.config.PaletteProperties;
 
 /**
@@ -22,9 +22,12 @@ public class EidpLogoutService {
     private static final Logger log = LoggerFactory.getLogger(EidpLogoutService.class);
 
     private final PaletteProperties properties;
+    private final String clientId;
 
-    public EidpLogoutService(PaletteProperties properties) {
+    public EidpLogoutService(PaletteProperties properties,
+                             @Value("${spring.security.oauth2.client.registration.eidp.client-id:palette-bff}") String clientId) {
         this.properties = properties;
+        this.clientId = clientId;
     }
 
     /**
@@ -44,12 +47,16 @@ public class EidpLogoutService {
             return null;
         }
 
-        // Build the logout URL with id_token_hint and post_logout_redirect_uri
+        // Build the logout URL with id_token_hint, client_id, and post_logout_redirect_uri
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(logoutUri);
 
         if (idTokenHint != null && !idTokenHint.isBlank()) {
             builder.queryParam("id_token_hint", idTokenHint);
         }
+
+        // Always include client_id so Keycloak can identify the client
+        // even when id_token_hint is missing (e.g., expired session)
+        builder.queryParam("client_id", clientId);
 
         String postLogoutRedirectUri = properties.getEidp().getPostLogoutRedirectUri();
         if (postLogoutRedirectUri != null && !postLogoutRedirectUri.isBlank()) {

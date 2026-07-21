@@ -30,7 +30,7 @@ public class PaletteProperties {
         private Cookie cookie = new Cookie();
         private Cors cors = new Cors();
         /** Frontend application URL for post-login redirect */
-        private String frontendUrl = "http://localhost:3000";
+        private String frontendUrl = "https://localhost:3000";
     }
 
     @Data
@@ -42,7 +42,7 @@ public class PaletteProperties {
 
     @Data
     public static class Cors {
-        private String allowedOrigins = "http://localhost:3000";
+        private String allowedOrigins = "https://localhost:3000";
         private String allowedMethods = "GET,POST,PUT,DELETE,PATCH,OPTIONS";
         private String allowedHeaders = "*";
         private boolean allowCredentials = true;

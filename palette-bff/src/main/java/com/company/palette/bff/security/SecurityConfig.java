@@ -53,6 +53,7 @@ public class SecurityConfig {
                     "/palette/api/v1/system/info",
                     "/palette/api/v1/auth/login",
                     "/palette/api/v1/auth/session",
+                    "/palette/api/v1/auth/logout",
                     "/login/oauth2/**",
                     "/palette/api-docs/**",
                     "/palette/swagger-ui/**",
@@ -70,10 +71,10 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/palette/api/v1/auth/login")
-                .defaultSuccessUrl(properties.getSecurity().getFrontendUrl(), true)
+                .defaultSuccessUrl(properties.getSecurity().getFrontendUrl() + "/dashboard", true)
             );
-        // Note: logout is handled by AuthController's POST /palette/api/v1/auth/logout
-        // which includes eIDP logout integration and audit logging
+        // Note: logout is handled by AuthController's GET /palette/api/v1/auth/logout
+        // which invalidates session, clears cookie, and redirects to eIDP logout
 
         // Register TokenRefreshFilter after OAuth2 login processing
         // so that authentication is established before token refresh is attempted

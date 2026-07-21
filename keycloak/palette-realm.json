@@ -48,7 +48,7 @@
         "http://localhost:8080/login/oauth2/code/*"
       ],
       "webOrigins": [
-        "http://localhost:3000",
+        "https://localhost:3000",
         "http://localhost:8080"
       ],
       "rootUrl": "http://localhost:8080",
@@ -72,7 +72,7 @@
         "microprofile-jwt"
       ],
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:3000##http://localhost:8080",
+        "post.logout.redirect.uris": "https://localhost:3000##http://localhost:8080",
         "backchannel.logout.session.required": "true",
         "backchannel.logout.revoke.offline.tokens": "false"
       },

@@ -2,8 +2,8 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import {
   checkSession,
   login as apiLogin,
-  logout as apiLogout,
   classifyError,
+  setLoggingOut,
   type SessionInfo,
   type PlatformError,
 } from '@palette/api';
@@ -51,19 +51,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         expiresAt: session.expiresAt,
         error: null,
       });
-
-      if (!session.authenticated) {
-        // Not authenticated — redirect to login
-        apiLogin();
-      }
+      // Note: Do NOT auto-redirect here.
+      // Protected routes will handle the redirect via ProtectedRoute component.
+      // Public pages (e.g., landing page) should remain visible when not authenticated.
     } catch (err) {
       // Classify the error for user-friendly display
       const platformError = classifyError(err);
       console.error('[Palette Auth] Session check failed:', platformError);
 
-      // For session expired / 401, redirect to login
+      // For session expired / 401, let ProtectedRoute handle redirect
       if (platformError.code === 'SESSION_EXPIRED') {
-        apiLogin();
+        setState((prev) => ({ ...prev, authenticated: false, loading: false }));
         return;
       }
 
@@ -87,21 +85,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      const result = await apiLogout();
-      setState({ authenticated: false, loading: false, error: null });
+    // Set flag to prevent axios interceptor from redirecting to login on 401
+    setLoggingOut(true);
 
-      // If BFF returns eIDP logout URL, redirect to it
-      if (result.eidpLogoutUrl) {
-        window.location.href = result.eidpLogoutUrl;
-      } else {
-        // Reload to trigger session check → login redirect
-        window.location.reload();
-      }
-    } catch {
-      // Even if API fails, force reload
-      window.location.reload();
-    }
+    // Reset auth state
+    setState({ authenticated: false, loading: false, error: null });
+
+    // Navigate to BFF logout endpoint (GET) which will:
+    // 1. Invalidate the BFF session
+    // 2. Clear the session cookie
+    // 3. Redirect to Keycloak logout (which redirects back to landing page)
+    // Using window.location.href ensures the browser processes Set-Cookie natively
+    window.location.href = '/palette/api/v1/auth/logout';
   }, []);
 
   const clearError = useCallback(() => {
