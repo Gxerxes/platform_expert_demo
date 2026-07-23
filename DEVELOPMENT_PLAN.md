@@ -49,7 +49,7 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 |------|--------|------|
 | **BFF 基础层** | 100% | 🟢 完整实现：权限系统 + 动态路由 + 速率限制 + 核心网关 |
 | **前端 Monorepo 基础** | 90% | 🟢 结构完整，pnpm workspace 运行中 |
-| **@palette/core** | 60% | 🟡 Provider 嵌套完成，缺少生命周期管理 |
+| **@palette/core** | 90% | 🟢 企业级：生命周期管理 + 插件系统 + 事件总线 + 版本/健康监控 |
 | **@palette/auth** | 85% | 🟢 企业级权限控制：AuthProvider, usePermission, RequirePermission, useSessionExpiry |
 | **@palette/api** | 80% | 🟢 TanStack Query 集成完成，缺少业务 hooks 模式 |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar 基础完成，缺少响应式 |
@@ -87,6 +87,12 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ Monorepo 结构 (pnpm workspace)
 - ✅ 9 个平台包 (@palette/*)
 - ✅ PaletteProvider 嵌套体系
+- ✅ 平台生命周期管理 (阶段追踪 + 启动性能测量)
+- ✅ 平台事件总线 (跨模块通信)
+- ✅ 插件系统 (可扩展架构)
+- ✅ 增强型错误边界 (自动重试 + 降级 UI)
+- ✅ 版本检测与更新提示
+- ✅ 平台健康监控 Hook
 - ✅ Axios 客户端 + 拦截器
 - ✅ TanStack Query v5 企业级集成
 - ✅ Query Key 工厂系统

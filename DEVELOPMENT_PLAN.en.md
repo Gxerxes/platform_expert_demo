@@ -49,7 +49,7 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 |--------|------------|--------|
 | **BFF Foundation Layer** | 100% | 🟢 Full implementation: Permission system + Dynamic routing + Rate limiting + Core gateway |
 | **Frontend Monorepo** | 90% | 🟢 Structure complete, pnpm workspace operational |
-| **@palette/core** | 60% | 🟡 Provider nesting complete; missing lifecycle management |
+| **@palette/core** | 90% | 🟢 Enterprise-grade: Lifecycle management + Plugin system + Event bus + Version/Health monitoring |
 | **@palette/auth** | 85% | 🟢 Enterprise-grade: AuthProvider, usePermission, RequirePermission, useSessionExpiry |
 | **@palette/api** | 80% | 🟢 TanStack Query integration complete; missing business hook patterns |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar basics complete; missing responsive design |
@@ -87,6 +87,12 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 - ✅ Monorepo structure (pnpm workspace)
 - ✅ 9 platform packages (@palette/*)
 - ✅ PaletteProvider nesting hierarchy
+- ✅ Platform lifecycle management (phase tracking + boot performance)
+- ✅ Platform event bus (cross-module communication)
+- ✅ Plugin system (extensible architecture)
+- ✅ Enhanced error boundary (auto-retry + degraded UI)
+- ✅ Version detection & update prompts
+- ✅ Platform health monitoring hooks
 - ✅ Axios client + interceptors
 - ✅ TanStack Query v5 enterprise integration
 - ✅ Query Key factory system

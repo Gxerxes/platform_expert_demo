@@ -82,7 +82,6 @@ export type {
   // Permissions
   PermissionMode,
   PermissionCheckConfig,
-  PalettePermission,
   // Events
   AuthEvent,
   AuthEventType,

@@ -111,7 +111,7 @@ let configCache: ConfigCache | null = null;
 
 export function ConfigProvider({ children, config: providerConfig }: ConfigProviderProps) {
   const mergedConfig = useMemo(() => ({ ...DEFAULT_CONFIG, ...providerConfig }), [providerConfig]);
-  const logger = useMemo(() => createLogger(mergedConfig.debug), [mergedConfig.debug]);
+  const logger = useMemo(() => createLogger(mergedConfig.debug ?? false), [mergedConfig.debug]);
 
   const [state, setState] = useState<ConfigState>(() => {
     // Check cache first

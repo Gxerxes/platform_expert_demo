@@ -64,7 +64,7 @@
 
 | Capability | Package | Description |
 |------------|---------|-------------|
-| **Application Shell** | `@palette/core` | Provider hierarchy, ErrorBoundary, lifecycle management |
+| **Application Shell** | `@palette/core` | Provider hierarchy, ErrorBoundary, lifecycle management, plugin system, event bus |
 | **Enterprise Layout** | `@palette/layout` | AppShell, Header, Sidebar, Breadcrumb, responsive grid |
 | **UI Component Library** | `@palette/ui` | 30+ enterprise components (Form, Table, Modal, Drawer...) |
 | **Theme System** | `@palette/theme` | Design tokens, Light/Dark mode, MUI customization |

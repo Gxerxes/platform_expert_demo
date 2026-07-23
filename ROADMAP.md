@@ -454,6 +454,7 @@ Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░�
 | **API Client** | Axios + TanStack Query v5, Query Key factory, platform hooks, error classification |
 | **Layout** | AppShell, Header, Sidebar, PageContainer |
 | **Auth** | AuthProvider (enterprise), usePermission, RequirePermission, useSessionExpiry, ConfigProvider, ContextProvider, PaletteProvider nesting |
+| **Core** | Platform lifecycle, event bus, plugin system, error boundary, version/health monitoring |
 | **Router** | Declarative route config, protected/public routes |
 | **Demo** | Full Task Management app (frontend + backend), BFF gateway integration |
 | **Scaffold** | CLI tool (create-palette-app), tested and working |
