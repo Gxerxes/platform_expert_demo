@@ -51,7 +51,7 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 | **Frontend Monorepo** | 90% | 🟢 Structure complete, pnpm workspace operational |
 | **@palette/core** | 90% | 🟢 Enterprise-grade: Lifecycle management + Plugin system + Event bus + Version/Health monitoring |
 | **@palette/auth** | 85% | 🟢 Enterprise-grade: AuthProvider, usePermission, RequirePermission, useSessionExpiry |
-| **@palette/api** | 80% | 🟢 TanStack Query integration complete; missing business hook patterns |
+| **@palette/api** | 95% | 🟢 Enterprise: TanStack Query v5 + Core hooks + Business patterns (pagination/polling/optimistic/debounced search) |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar basics complete; missing responsive design |
 | **@palette/router** | 40% | 🟡 Basic route registration; missing dynamic menu/permission routes |
 | **@palette/ui** | 30% | 🟡 Basic components (Button/Loading/Error); missing component library system |
@@ -96,7 +96,11 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 - ✅ Axios client + interceptors
 - ✅ TanStack Query v5 enterprise integration
 - ✅ Query Key factory system
-- ✅ Pre-built platform-level hooks
+- ✅ Pre-built platform-level hooks (useSession, useUserContext, useEidpUserInfo, useRuntimeConfig)
+- ✅ Business hook patterns (usePaginatedQuery, usePolling, useDebouncedQuery)
+- ✅ Optimistic update pattern (useOptimisticMutation)
+- ✅ Auto-invalidation mutation (useMutationWithInvalidate)
+- ✅ Enhanced status detection (useQueryWithStatus)
 - ✅ Error classification system (PlatformError)
 - ✅ Basic layout components (AppShell/Header/Sidebar)
 - ✅ Basic UI components (Button/Loading/Error/EmptyState)

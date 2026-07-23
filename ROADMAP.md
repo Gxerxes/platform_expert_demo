@@ -451,7 +451,7 @@ Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░�
 |------|-------------|
 | **Monorepo** | pnpm workspace, 9 packages, dependency wiring |
 | **BFF** | OIDC auth, session mgmt, gateway proxy, token relay, audit, tracing, permission extraction, dynamic routing, rate limiting, Docker |
-| **API Client** | Axios + TanStack Query v5, Query Key factory, platform hooks, error classification |
+| **API Client** | Axios + TanStack Query v5, Query Key factory, platform hooks, error classification, business patterns (pagination/polling/optimistic/debounce) |
 | **Layout** | AppShell, Header, Sidebar, PageContainer |
 | **Auth** | AuthProvider (enterprise), usePermission, RequirePermission, useSessionExpiry, ConfigProvider, ContextProvider, PaletteProvider nesting |
 | **Core** | Platform lifecycle, event bus, plugin system, error boundary, version/health monitoring |

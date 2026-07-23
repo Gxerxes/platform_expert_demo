@@ -51,7 +51,7 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 | **前端 Monorepo 基础** | 90% | 🟢 结构完整，pnpm workspace 运行中 |
 | **@palette/core** | 90% | 🟢 企业级：生命周期管理 + 插件系统 + 事件总线 + 版本/健康监控 |
 | **@palette/auth** | 85% | 🟢 企业级权限控制：AuthProvider, usePermission, RequirePermission, useSessionExpiry |
-| **@palette/api** | 80% | 🟢 TanStack Query 集成完成，缺少业务 hooks 模式 |
+| **@palette/api** | 95% | 🟢 企业级：TanStack Query v5 + 核心 hooks + 业务模式 (分页/轮询/乐观更新/防抖搜索) |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar 基础完成，缺少响应式 |
 | **@palette/router** | 40% | 🟡 基础路由注册，缺少动态菜单/权限路由 |
 | **@palette/ui** | 30% | 🟡 基础组件 (Button/Loading/Error)，缺少组件库体系 |
@@ -96,7 +96,11 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ Axios 客户端 + 拦截器
 - ✅ TanStack Query v5 企业级集成
 - ✅ Query Key 工厂系统
-- ✅ 平台级预构建 Hooks
+- ✅ 平台级预构建 Hooks (useSession, useUserContext, useEidpUserInfo, useRuntimeConfig)
+- ✅ 业务 hooks 模式 (usePaginatedQuery, usePolling, useDebouncedQuery)
+- ✅ 乐观更新模式 (useOptimisticMutation)
+- ✅ 自动缓存失效 Mutation (useMutationWithInvalidate)
+- ✅ 增强状态检测 (useQueryWithStatus)
 - ✅ 错误分类体系 (PlatformError)
 - ✅ 基础布局组件 (AppShell/Header/Sidebar)
 - ✅ 基础 UI 组件 (Button/Loading/Error/EmptyState)

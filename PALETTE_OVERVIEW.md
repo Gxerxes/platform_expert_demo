@@ -70,7 +70,7 @@
 | **Theme System** | `@palette/theme` | Design tokens, Light/Dark mode, MUI customization |
 | **Navigation & Routing** | `@palette/router` | Declarative route config, dynamic menu, permission filtering |
 | **Authentication & Permissions** | `@palette/auth` | AuthProvider, `usePermission()`, `<RequirePermission>` |
-| **API Client** | `@palette/api` | Axios + TanStack Query v5, Query Key factory, platform hooks |
+| **API Client** | `@palette/api` | Axios + TanStack Query v5, Query Key factory, platform hooks, business patterns |
 | **Configuration** | `@palette/config` | Runtime config, Feature Flags, environment-aware settings |
 | **User Context** | `@palette/context` | User profile, preferences, multi-tenant context |
 | **Utilities** | `@palette/utils` | Logger, formatters, validators, shared helpers |
