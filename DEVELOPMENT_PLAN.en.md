@@ -47,15 +47,15 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 
 | Module | Completion | Status |
 |--------|------------|--------|
-| **BFF Foundation Layer** | 75% | 🟡 Core MVP complete; missing permission/advanced gateway |
+| **BFF Foundation Layer** | 100% | 🟢 Full implementation: Permission system + Dynamic routing + Rate limiting + Core gateway |
 | **Frontend Monorepo** | 90% | 🟢 Structure complete, pnpm workspace operational |
 | **@palette/core** | 60% | 🟡 Provider nesting complete; missing lifecycle management |
-| **@palette/auth** | 50% | 🟡 AuthProvider basics complete; missing permission control |
+| **@palette/auth** | 85% | 🟢 Enterprise-grade: AuthProvider, usePermission, RequirePermission, useSessionExpiry |
 | **@palette/api** | 80% | 🟢 TanStack Query integration complete; missing business hook patterns |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar basics complete; missing responsive design |
 | **@palette/router** | 40% | 🟡 Basic route registration; missing dynamic menu/permission routes |
 | **@palette/ui** | 30% | 🟡 Basic components (Button/Loading/Error); missing component library system |
-| **@palette/config** | 70% | 🟢 ConfigProvider complete; missing Feature Flags |
+| **@palette/config** | 90% | 🟢 Enterprise-grade: ConfigProvider + Feature Flag system + Environment detection |
 | **@palette/context** | 60% | 🟡 ContextProvider complete; missing multi-tenancy |
 | **@palette/utils** | 50% | 🟡 Basic utility functions |
 | **Demo Application** | 85% | 🟢 Full frontend/backend demo implemented; backend compiles |
@@ -78,6 +78,9 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 - ✅ Health/Info system APIs
 - ✅ File upload/download
 - ✅ Docker deployment support
+- ✅ Permission aggregation module (eIDP claims extraction)
+- ✅ Dynamic route management (priority merging + runtime config)
+- ✅ Rate limiting filter (sliding window algorithm)
 - ✅ Basic unit tests (4 test classes)
 
 **Frontend Platform**:
@@ -94,6 +97,9 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 - ✅ Declarative route registration
 - ✅ Complete demo application (Task Management)
 - ✅ Scaffolding CLI tool
+- ✅ @palette/auth enterprise enhancement (permission hooks, RequirePermission, useSessionExpiry)
+- ✅ @palette/config enterprise enhancement (Feature Flags, environment detection)
+- ✅ @palette/api TanStack Query v5 + scaffold CLI integration
 
 ---
 

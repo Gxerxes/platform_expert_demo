@@ -435,12 +435,12 @@ PALETTE-EPIC-001  Enterprise UI Platform MVP
 
 ## 5. Current Progress Snapshot (as of 2025-07-21)
 
-### Overall: ~55% of MVP complete
+### Overall: ~60% of MVP complete
 
 ```
 Phase 0  Foundation      ████████████████████  90%  ← Nearly done
 Phase 1  UI Framework    ████████████░░░░░░░░  60%  ← Shell + API done; UI/Nav remaining
-Phase 2  BFF Platform    ████████████████░░░░  75%  ← Core done; permissions/gateway+
+Phase 2  BFF Platform    ████████████████████  100% ← Complete: auth + session + gateway + permissions + rate limiting
 Phase 3  Enablement      ████░░░░░░░░░░░░░░░░  25%  ← Demo + scaffold done; docs remaining
 Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░░░  10%  ← Just started
 ```
@@ -450,10 +450,10 @@ Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░�
 | Area | What's Done |
 |------|-------------|
 | **Monorepo** | pnpm workspace, 9 packages, dependency wiring |
-| **BFF** | OIDC auth, session mgmt, gateway proxy, token relay, audit, tracing, Docker |
+| **BFF** | OIDC auth, session mgmt, gateway proxy, token relay, audit, tracing, permission extraction, dynamic routing, rate limiting, Docker |
 | **API Client** | Axios + TanStack Query v5, Query Key factory, platform hooks, error classification |
 | **Layout** | AppShell, Header, Sidebar, PageContainer |
-| **Auth** | AuthProvider, ConfigProvider, ContextProvider, PaletteProvider nesting |
+| **Auth** | AuthProvider (enterprise), usePermission, RequirePermission, useSessionExpiry, ConfigProvider, ContextProvider, PaletteProvider nesting |
 | **Router** | Declarative route config, protected/public routes |
 | **Demo** | Full Task Management app (frontend + backend), BFF gateway integration |
 | **Scaffold** | CLI tool (create-palette-app), tested and working |
@@ -466,8 +466,6 @@ Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░�
 | **UI Components** | Form, Table, Modal, Dialog, Card (full component library) |
 | **Theme** | Design tokens, Light/Dark mode |
 | **Navigation** | Dynamic menu, permission-based filtering |
-| **Permissions** | usePermission, RequirePermission, permission API |
-| **BFF+** | Dynamic routes, rate limiting, permission aggregation |
 | **Docs** | Developer portal, Storybook, integration guide |
 | **Testing** | Frontend tests, BFF test completion, CI quality gates |
 | **Monitoring** | Error capture, Web Vitals, Prometheus metrics |

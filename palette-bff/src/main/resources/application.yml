@@ -77,6 +77,11 @@ palette:
     connect-timeout: 5000
     read-timeout: 30000
     routes: []
+    rate-limit:
+      enabled: ${RATE_LIMIT_ENABLED:true}
+      authenticated-limit: 200
+      anonymous-limit: 60
+      admin-limit: 500
   session:
     store-type: redis
   eidp:

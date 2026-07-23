@@ -85,6 +85,8 @@
 | **Session Management** | HttpOnly secure cookies, Redis/InMemory dual mode, automatic expiry |
 | **Token Relay** | Backend services never see frontend; BFF injects `Authorization: Bearer` |
 | **API Gateway** | Route proxy, header injection (X-User-ID, X-Request-ID), rate limiting |
+| **Permission System** | eIDP claims extraction, role/permission mapping, admin detection, multi-source support |
+| **Dynamic Routing** | Runtime route management, priority-based merging, per-route method/timeout control |
 | **User Context** | `/context` API — user profile, permissions, preferences |
 | **Runtime Config** | `/config` API — feature flags, environment settings, app metadata |
 | **Audit Framework** | Event-based audit logging, interceptor-driven, structured log output |
@@ -299,21 +301,21 @@ When your team builds on Palette, you inherit:
 ## 7. Current Status
 
 ```
-Overall Progress: ~55% toward MVP
+Overall Progress: ~60% toward MVP
 
 Phase 0  Foundation      ████████████████████  90%
 Phase 1  UI Framework    ████████████░░░░░░░░  60%
-Phase 2  BFF Platform    ████████████████░░░░  75%
+Phase 2  BFF Platform    ████████████████████  100%
 Phase 3  Enablement      ████░░░░░░░░░░░░░░░░  25%
 Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░░░  10%
 ```
 
 ### Already Delivered
 
-- **BFF**: Full OIDC auth, session management, API gateway, token relay, audit, tracing
+- **BFF**: Full OIDC auth, session management, API gateway, token relay, audit, tracing, permission extraction, dynamic routing, rate limiting
 - **API Client**: TanStack Query v5 integration, Query Key factory, platform hooks
 - **Layout**: AppShell, Header, Sidebar, PageContainer
-- **Auth**: Provider system, config distribution, user context
+- **Auth**: Provider system, permission hooks (`usePermission`, `RequirePermission`), config distribution, user context
 - **Router**: Declarative route registration, protected/public routes
 - **Demo**: Complete Task Management app (frontend + backend)
 - **CLI**: Scaffolding tool (`create-palette-app`)
@@ -323,7 +325,6 @@ Phase 4  Prod Ready      ██░░░░░░░░░░░░░░░░�
 
 - UI component library expansion (Form, Table, Modal, Dialog)
 - Theme system with Light/Dark mode
-- Permission hooks and dynamic menu
 - Developer documentation portal + Storybook
 - Monitoring, i18n, micro-frontend support
 
@@ -388,7 +389,8 @@ palette-platform/
 │   ├── auth/                             #   OIDC authentication
 │   ├── security/                         #   Spring Security config
 │   ├── session/                          #   Session management
-│   ├── gateway/                          #   API gateway proxy
+│   ├── gateway/                          #   API gateway proxy + dynamic routing + rate limiting
+│   ├── permission/                       #   Permission extraction from eIDP claims
 │   ├── context/                          #   User context API
 │   ├── config/                           #   Runtime config API
 │   ├── audit/                            #   Audit framework

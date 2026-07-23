@@ -47,15 +47,15 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 
 | 模块 | 完成度 | 状态 |
 |------|--------|------|
-| **BFF 基础层** | 75% | 🟡 Core MVP 完成，缺少权限/高级网关 |
+| **BFF 基础层** | 100% | 🟢 完整实现：权限系统 + 动态路由 + 速率限制 + 核心网关 |
 | **前端 Monorepo 基础** | 90% | 🟢 结构完整，pnpm workspace 运行中 |
 | **@palette/core** | 60% | 🟡 Provider 嵌套完成，缺少生命周期管理 |
-| **@palette/auth** | 50% | 🟡 AuthProvider 基础完成，缺少权限控制 |
+| **@palette/auth** | 85% | 🟢 企业级权限控制：AuthProvider, usePermission, RequirePermission, useSessionExpiry |
 | **@palette/api** | 80% | 🟢 TanStack Query 集成完成，缺少业务 hooks 模式 |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar 基础完成，缺少响应式 |
 | **@palette/router** | 40% | 🟡 基础路由注册，缺少动态菜单/权限路由 |
 | **@palette/ui** | 30% | 🟡 基础组件 (Button/Loading/Error)，缺少组件库体系 |
-| **@palette/config** | 70% | 🟢 ConfigProvider 完成，缺少 Feature Flag |
+| **@palette/config** | 90% | 🟢 企业级：ConfigProvider + Feature Flag 系统 + 环境检测 |
 | **@palette/context** | 60% | 🟡 ContextProvider 完成，缺少多租户 |
 | **@palette/utils** | 50% | 🟡 基础工具函数 |
 | **Demo 应用** | 85% | 🟢 前后端 Demo 完整实现，后端编译通过 |
@@ -78,6 +78,9 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ Health/Info 系统 API
 - ✅ 文件上传/下载
 - ✅ Docker 部署支持
+- ✅ 权限聚合模块 (eIDP claims 提取)
+- ✅ 动态路由管理 (优先级合并 + 运行时配置)
+- ✅ 速率限制过滤器 (滑动窗口算法)
 - ✅ 基础单元测试 (4 个测试类)
 
 **前端平台**:
@@ -94,6 +97,9 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ 声明式路由注册
 - ✅ 完整 Demo 应用 (任务管理)
 - ✅ 脚手架 CLI 工具
+- ✅ @palette/auth 企业级增强 (权限 Hook, RequirePermission, useSessionExpiry)
+- ✅ @palette/config 企业级增强 (Feature Flag, 环境检测)
+- ✅ @palette/api TanStack Query v5 + 脚手架 CLI 集成
 
 ---
 

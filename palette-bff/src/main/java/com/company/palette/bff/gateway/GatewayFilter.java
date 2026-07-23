@@ -26,7 +26,6 @@ import com.company.palette.bff.exception.ErrorCode;
 import com.company.palette.bff.exception.ErrorResponse;
 import com.company.palette.bff.tracing.TracingContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,14 +40,17 @@ public class GatewayFilter extends OncePerRequestFilter {
     private final PaletteProperties properties;
     private final OAuth2AuthorizedClientManager authorizedClientManager;
     private final ObjectMapper objectMapper;
+    private final DynamicRouteService dynamicRouteService;
     private final HttpClient httpClient;
 
     public GatewayFilter(PaletteProperties properties,
                          OAuth2AuthorizedClientManager authorizedClientManager,
-                         ObjectMapper objectMapper) {
+                         ObjectMapper objectMapper,
+                         DynamicRouteService dynamicRouteService) {
         this.properties = properties;
         this.authorizedClientManager = authorizedClientManager;
         this.objectMapper = objectMapper;
+        this.dynamicRouteService = dynamicRouteService;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(properties.getGateway().getConnectTimeout()))
                 .build();
@@ -64,19 +66,23 @@ public class GatewayFilter extends OncePerRequestFilter {
             return;
         }
 
-        Optional<PaletteProperties.Route> matchedRoute = findMatchingRoute(requestUri);
+        // Try dynamic routes first (includes static routes merged)
+        Optional<GatewayRoute> matchedRoute = dynamicRouteService.resolveRoute(requestUri, request.getMethod());
         if (matchedRoute.isEmpty()) {
             writeError(response, ErrorCode.NOT_FOUND, "No route configured for: " + requestUri);
             return;
         }
 
-        PaletteProperties.Route route = matchedRoute.get();
-        String targetUrl = buildTargetUrl(request, route);
+        GatewayRoute route = matchedRoute.get();
+        String targetUrl = route.buildTargetUrl(requestUri, request.getQueryString());
 
         try {
+            int timeout = route.getTimeoutMs() != null
+                    ? route.getTimeoutMs()
+                    : properties.getGateway().getReadTimeout();
             HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(targetUrl))
-                    .timeout(Duration.ofMillis(properties.getGateway().getReadTimeout()));
+                    .timeout(Duration.ofMillis(timeout));
 
             copyHeaders(request, httpRequestBuilder);
             enrichWithAuthAndContext(request, httpRequestBuilder);
@@ -98,24 +104,7 @@ public class GatewayFilter extends OncePerRequestFilter {
         }
     }
 
-    private Optional<PaletteProperties.Route> findMatchingRoute(String requestUri) {
-        return properties.getGateway().getRoutes().stream()
-                .filter(route -> {
-                    String pattern = route.getPath().replace("/**", "");
-                    return requestUri.startsWith("/palette/api/v1" + pattern);
-                })
-                .findFirst();
-    }
-
-    private String buildTargetUrl(HttpServletRequest request, PaletteProperties.Route route) {
-        String basePath = route.getPath().replace("/**", "");
-        String subPath = request.getRequestURI()
-                .replace("/palette/api/v1" + basePath, "");
-        String queryString = request.getQueryString();
-        String targetBase = route.getTarget();
-
-        return targetBase + subPath + (queryString != null ? "?" + queryString : "");
-    }
+    // Dynamic routes are managed via DynamicRouteService
 
     private void copyHeaders(HttpServletRequest request, HttpRequest.Builder builder) {
         Enumeration<String> headerNames = request.getHeaderNames();

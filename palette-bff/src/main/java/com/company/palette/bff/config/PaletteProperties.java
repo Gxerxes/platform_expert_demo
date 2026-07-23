@@ -54,6 +54,7 @@ public class PaletteProperties {
         private int connectTimeout = 5000;
         private int readTimeout = 30000;
         private List<Route> routes = new ArrayList<>();
+        private RateLimit rateLimit = new RateLimit();
     }
 
     @Data
@@ -61,6 +62,24 @@ public class PaletteProperties {
         private String name;
         private String path;
         private String target;
+        /** Whether this route is enabled */
+        private boolean enabled = true;
+        /** Allowed HTTP methods (empty = all) */
+        private List<String> allowedMethods = new ArrayList<>();
+        /** Strip matched prefix before forwarding */
+        private boolean stripPrefix = true;
+    }
+
+    @Data
+    public static class RateLimit {
+        /** Whether rate limiting is enabled */
+        private boolean enabled = true;
+        /** Max requests per minute for authenticated users */
+        private int authenticatedLimit = 200;
+        /** Max requests per minute for anonymous/IP-based requests */
+        private int anonymousLimit = 60;
+        /** Max requests per minute for admin users */
+        private int adminLimit = 500;
     }
 
     @Data
