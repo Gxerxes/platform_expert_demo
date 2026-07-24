@@ -52,6 +52,7 @@ import type {
   PaletteUser,
 } from './types';
 import { authEvents } from './authEvents';
+import { initAuthSync, destroyAuthSync, authSync } from './multiTabSync';
 import {
   hasPermission as checkPermission,
   hasAllPermissions as checkAllPermissions,
@@ -183,12 +184,49 @@ export function AuthProvider({ children, config }: AuthProviderProps) {
 
   // Track mounted state to prevent setState after unmount
   const mountedRef = useRef(true);
+  const refreshSessionRef = useRef<() => Promise<void>>();
 
   useEffect(() => {
     mountedRef.current = true;
     logger.debug('AuthProvider mounted');
+
+    // Initialize multi-tab sync
+    initAuthSync({
+      onLogin: () => {
+        logger.debug('Login detected in another tab, refreshing session...');
+        refreshSessionRef.current?.();
+      },
+      onLogout: () => {
+        logger.debug('Logout detected in another tab');
+        if (mountedRef.current) {
+          setState({
+            status: 'unauthenticated',
+            loading: false,
+            authenticated: false,
+            user: null,
+            expiresAt: null,
+            error: null,
+            retryCount: 0,
+          });
+        }
+      },
+      onSessionExpired: () => {
+        logger.debug('Session expired in another tab');
+        if (mountedRef.current) {
+          setState((prev) => ({
+            ...prev,
+            status: 'expired' as AuthStatus,
+            loading: false,
+            authenticated: false,
+            user: null,
+          }));
+        }
+      },
+    });
+
     return () => {
       mountedRef.current = false;
+      destroyAuthSync();
       logger.debug('AuthProvider unmounted');
     };
   }, [logger]);
@@ -265,6 +303,8 @@ export function AuthProvider({ children, config }: AuthProviderProps) {
 
         // Emit login event
         authEvents.emit('auth:login', { user, expiresAt: session.expiresAt });
+        // Broadcast to other tabs
+        authSync?.broadcastLogin({ user, expiresAt: session.expiresAt });
         logger.info('User authenticated:', user?.username);
       }
     } catch (err) {
@@ -319,6 +359,11 @@ export function AuthProvider({ children, config }: AuthProviderProps) {
     }
   }, [logger, maxRetries, state.retryCount]);
 
+  // Keep ref in sync
+  useEffect(() => {
+    refreshSessionRef.current = refreshSession;
+  }, [refreshSession]);
+
   // Initial session check on mount
   useEffect(() => {
     refreshSession();
@@ -363,6 +408,8 @@ export function AuthProvider({ children, config }: AuthProviderProps) {
 
     // Emit logout event
     authEvents.emit('auth:logout', { user: state.user });
+    // Broadcast to other tabs
+    authSync?.broadcastLogout();
 
     // Navigate to BFF logout endpoint
     const logoutUrl = `${mergedConfig.basePath}${mergedConfig.logoutPath}`;

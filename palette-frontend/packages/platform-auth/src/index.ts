@@ -7,9 +7,13 @@
  * - OIDC-based authentication via BFF
  * - User info enrichment from eIDP claims
  * - Permission & role-based access control
- * - Session expiry monitoring
+ * - Session expiry monitoring with countdown
  * - Auth lifecycle event bus
  * - Declarative guard components
+ * - Pattern matching for auth states
+ * - User idle detection for security
+ * - Multi-tab synchronization
+ * - HOC support for class components
  *
  * @example
  *   // Basic usage
@@ -19,16 +23,20 @@
  *     <App />
  *   </AuthProvider>
  *
- *   // In a component
- *   function MyComponent() {
- *     const { user, hasPermission } = useAuth();
- *     return hasPermission('TRADE_VIEW') ? <TradeList /> : <AccessDenied />;
- *   }
+ *   // Pattern matching
+ *   import { useAuthState } from '@palette/auth';
+ *   const ui = useAuthState({
+ *     authenticated: () => <Dashboard />,
+ *     unauthenticated: () => <Login />,
+ *     _: () => <Loading />,
+ *   });
  *
- *   // Declarative permission guard
- *   <RequirePermission permission="TRADE_CREATE">
- *     <CreateButton />
- *   </RequirePermission>
+ *   // Idle detection
+ *   import { useIdleDetection } from '@palette/auth';
+ *   const { isIdle, resetIdle } = useIdleDetection({
+ *     idleTimeout: 900,
+ *     onIdle: () => logout(),
+ *   });
  *
  * @packageDocumentation
  */
@@ -49,6 +57,32 @@ export { useSessionExpiry } from './useSessionExpiry';
 
 // ─── Auth Guard Components ────────────────────────────────
 export { RequireAuth, RequireAuthOrPublic } from './RequireAuth';
+
+// ─── Auth State Pattern Matching ──────────────────────────
+export { useAuthState, useAuthGate } from './useAuthState';
+export type { AuthStateContext, AuthStateHandlers, AuthGateConfig } from './useAuthState';
+
+// ─── Idle Detection ───────────────────────────────────────
+export { useIdleDetection } from './useIdleDetection';
+export type { ActivityEvent, UseIdleDetectionOptions, UseIdleDetectionResult } from './useIdleDetection';
+
+// ─── Multi-Tab Sync ───────────────────────────────────────
+export {
+  createMultiTabSync,
+  initAuthSync,
+  destroyAuthSync,
+  authSync,
+} from './multiTabSync';
+export type {
+  SyncMessageType,
+  SyncMessage,
+  MultiTabSyncConfig,
+  MultiTabSync,
+} from './multiTabSync';
+
+// ─── HOC for Class Components ─────────────────────────────
+export { withAuth, withPermission, withAuthAndPermission } from './withAuth';
+export type { WithAuthProps, WithPermissionProps } from './withAuth';
 
 // ─── Event Bus ────────────────────────────────────────────
 export { authEvents } from './authEvents';
