@@ -53,10 +53,10 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 | **@palette/auth** | 85% | 🟢 Enterprise-grade: AuthProvider, usePermission, RequirePermission, useSessionExpiry |
 | **@palette/api** | 95% | 🟢 Enterprise: TanStack Query v5 + Core hooks + Business patterns (pagination/polling/optimistic/debounced search) |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar basics complete; missing responsive design |
-| **@palette/router** | 40% | 🟡 Basic route registration; missing dynamic menu/permission routes |
+| **@palette/router** | 100% | 🟢 Enterprise: Dynamic menu + Permission route guard + Feature Flag filtering + Module registration |
 | **@palette/ui** | 30% | 🟡 Basic components (Button/Loading/Error); missing component library system |
 | **@palette/config** | 90% | 🟢 Enterprise-grade: ConfigProvider + Feature Flag system + Environment detection |
-| **@palette/context** | 60% | 🟡 ContextProvider complete; missing multi-tenancy |
+| **@palette/context** | 100% | 🟢 Enterprise multi-tenant: Tenant resolution/switching + Multi-strategy support + Tenant event bus |
 | **@palette/utils** | 50% | 🟡 Basic utility functions |
 | **Demo Application** | 85% | 🟢 Full frontend/backend demo implemented; backend compiles |
 | **Scaffolding CLI** | 80% | 🟢 CLI tool complete, tests passing |
@@ -71,6 +71,7 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 - ✅ Secure session management (Redis/InMemory dual mode)
 - ✅ API gateway proxy (Token Relay)
 - ✅ User context API
+- ✅ Multi-tenant context API (tenant list/switching)
 - ✅ Runtime configuration distribution
 - ✅ End-to-end request tracing
 - ✅ Audit framework
@@ -110,6 +111,8 @@ Palette is an enterprise-grade frontend platform that provides a standardized UI
 - ✅ @palette/auth enterprise enhancement (permission hooks, RequirePermission, useSessionExpiry)
 - ✅ @palette/config enterprise enhancement (Feature Flags, environment detection)
 - ✅ @palette/api TanStack Query v5 + scaffold CLI integration
+- ✅ @palette/router enterprise enhancement (dynamic menu, permission route guard, buildMenuRoutes)
+- ✅ @palette/context multi-tenant support (tenant resolution/switching, multi-strategy, tenant event bus)
 
 ---
 

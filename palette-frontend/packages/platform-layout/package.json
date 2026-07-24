@@ -12,6 +12,7 @@
     "@palette/auth": "workspace:*",
     "@palette/context": "workspace:*",
     "@palette/config": "workspace:*",
+    "@palette/router": "workspace:*",
     "react": "^18.3.1",
     "react-router-dom": "^6.26.0"
   },

@@ -61,6 +61,48 @@ export async function fetchUserContext(): Promise<UserContext> {
   return response.data.data;
 }
 
+// ─── Tenant APIs ─────────────────────────────────────────
+
+export interface TenantInfo {
+  /** Unique tenant identifier */
+  id: string;
+  /** Display name */
+  displayName: string;
+  /** Short code */
+  code: string;
+  /** Tenant status */
+  status: 'active' | 'suspended' | 'pending' | 'archived';
+  /** Tenant logo URL */
+  logoUrl?: string;
+  /** Contact email */
+  contactEmail?: string;
+  /** Tenant-specific config */
+  config?: Record<string, unknown>;
+  /** Available features */
+  features?: string[];
+}
+
+export interface TenantSwitchResponse {
+  success: boolean;
+  tenantId: string;
+}
+
+/**
+ * Fetch available tenants for the current user.
+ */
+export async function fetchAvailableTenants(): Promise<TenantInfo[]> {
+  const response = await paletteApi.get<ApiResponse<TenantInfo[]>>('/context/tenants');
+  return response.data.data;
+}
+
+/**
+ * Switch active tenant.
+ */
+export async function switchTenantApi(tenantId: string): Promise<TenantSwitchResponse> {
+  const response = await paletteApi.post<ApiResponse<TenantSwitchResponse>>('/context/tenant', { tenantId });
+  return response.data.data;
+}
+
 // ─── User Info (eIDP) APIs ──────────────────────────────
 
 export interface EidpUserInfo {

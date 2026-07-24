@@ -107,6 +107,10 @@ function getErrorIcon(code: string): string {
 
 // ─── Route Configuration Types ───────────────────────────
 
+/**
+ * Basic route configuration (backward compatible).
+ * For enterprise features (menu, permissions), use MenuRouteConfig.
+ */
 export interface PaletteRouteConfig {
   path: string;
   component: LazyExoticComponent<ComponentType>;
@@ -114,7 +118,7 @@ export interface PaletteRouteConfig {
   protected?: boolean;
 }
 
-// ─── Route Builder ───────────────────────────────────────
+// ─── Route Builder (Basic) ───────────────────────────────
 
 export function buildRoutes(configs: PaletteRouteConfig[]): RouteObject[] {
   return configs.map((config) => {
@@ -137,6 +141,68 @@ export function buildRoutes(configs: PaletteRouteConfig[]): RouteObject[] {
 
     if (config.children) {
       route.children = buildRoutes(config.children);
+    }
+
+    return route;
+  });
+}
+
+// ─── Enterprise Route Builder (with Permissions & Menu) ──
+
+import { PermissionRoute } from './PermissionRoute';
+import type { MenuRouteConfig } from './types';
+
+/**
+ * Build routes from MenuRouteConfig with permission guards.
+ * Each route is wrapped with PermissionRoute when permission is specified.
+ *
+ * @example
+ *   const routes: MenuRouteConfig[] = [
+ *     {
+ *       path: '/dashboard',
+ *       component: DashboardPage,
+ *       menu: { title: 'Dashboard', icon: { emoji: '📊' } },
+ *     },
+ *     {
+ *       path: '/admin',
+ *       component: AdminPage,
+ *       menu: { title: 'Admin' },
+ *       permission: { permissions: 'ADMIN_ACCESS' },
+ *     },
+ *   ];
+ *
+ *   const router = createBrowserRouter(buildMenuRoutes(routes));
+ */
+export function buildMenuRoutes(configs: MenuRouteConfig[]): RouteObject[] {
+  return configs.map((config) => {
+    let element = config.protected !== false ? (
+      <ProtectedRoute>
+        <Suspense fallback={<DefaultLoading />}>
+          <config.component />
+        </Suspense>
+      </ProtectedRoute>
+    ) : (
+      <Suspense fallback={<DefaultLoading />}>
+        <config.component />
+      </Suspense>
+    );
+
+    // Wrap with permission guard
+    if (config.permission) {
+      element = (
+        <PermissionRoute permission={config.permission}>
+          {element}
+        </PermissionRoute>
+      );
+    }
+
+    const route: RouteObject = {
+      path: config.path,
+      element,
+    };
+
+    if (config.children) {
+      route.children = buildMenuRoutes(config.children);
     }
 
     return route;
@@ -214,3 +280,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     return this.props.children;
   }
 }
+
+// ─── Re-export types and hooks ───────────────────────────
+
+export type {
+  MenuIcon,
+  MenuMeta,
+  RoutePermission,
+  MenuRouteConfig,
+  ResolvedMenuItem,
+  RouteModule,
+  RouteRegistryState,
+} from './types';
+
+export { PermissionRoute } from './PermissionRoute';
+export { useMenuRoutes, filterRoutesByPermission, filterRoutesByFeatureFlag } from './useMenuRoutes';

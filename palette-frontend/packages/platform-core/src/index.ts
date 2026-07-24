@@ -31,11 +31,21 @@ export { usePlatformHealth, useIsPlatformHealthy } from './usePlatformHealth';
 // ─── Re-export from other packages for convenience ───────
 export { useAuth } from '@palette/auth';
 export { useConfig, useFeatureFlag, useEnvironment } from '@palette/config';
-export { usePaletteContext } from '@palette/context';
-export { ErrorBoundary, buildRoutes } from '@palette/router';
+export { usePaletteContext, useTenantContext, useTenant, onTenantEvent } from '@palette/context';
+export type { PaletteContextValue, TenantInfo, TenantResolutionConfig, TenantContextValue, TenantEvent } from '@palette/context';
+export { ErrorBoundary, buildRoutes, buildMenuRoutes, PermissionRoute, useMenuRoutes, filterRoutesByPermission, filterRoutesByFeatureFlag } from '@palette/router';
 
 // ─── Type exports ────────────────────────────────────────
-export type { PaletteRouteConfig } from '@palette/router';
+export type {
+  PaletteRouteConfig,
+  MenuIcon,
+  MenuMeta,
+  RoutePermission,
+  MenuRouteConfig,
+  ResolvedMenuItem,
+  RouteModule,
+  RouteRegistryState,
+} from '@palette/router';
 
 export type {
   // Lifecycle

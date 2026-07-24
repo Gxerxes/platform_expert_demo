@@ -53,10 +53,10 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 | **@palette/auth** | 85% | 🟢 企业级权限控制：AuthProvider, usePermission, RequirePermission, useSessionExpiry |
 | **@palette/api** | 95% | 🟢 企业级：TanStack Query v5 + 核心 hooks + 业务模式 (分页/轮询/乐观更新/防抖搜索) |
 | **@palette/layout** | 55% | 🟡 AppShell/Header/Sidebar 基础完成，缺少响应式 |
-| **@palette/router** | 40% | 🟡 基础路由注册，缺少动态菜单/权限路由 |
+| **@palette/router** | 100% | 🟢 企业级：动态菜单 + 权限路由守卫 + Feature Flag 过滤 + 模块注册 |
 | **@palette/ui** | 30% | 🟡 基础组件 (Button/Loading/Error)，缺少组件库体系 |
 | **@palette/config** | 90% | 🟢 企业级：ConfigProvider + Feature Flag 系统 + 环境检测 |
-| **@palette/context** | 60% | 🟡 ContextProvider 完成，缺少多租户 |
+| **@palette/context** | 100% | 🟢 企业级多租户：租户解析/切换 + 多策略支持 + 租户事件总线 |
 | **@palette/utils** | 50% | 🟡 基础工具函数 |
 | **Demo 应用** | 85% | 🟢 前后端 Demo 完整实现，后端编译通过 |
 | **脚手架工具** | 80% | 🟢 CLI 工具完成，测试通过 |
@@ -71,6 +71,7 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ 安全会话管理 (Redis/InMemory 双模式)
 - ✅ API 网关代理 (Token Relay)
 - ✅ 用户上下文 API
+- ✅ 多租户上下文 API (租户列表/租户切换)
 - ✅ 运行时配置分发
 - ✅ 全链路请求追踪
 - ✅ 审计框架
@@ -107,9 +108,11 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ 声明式路由注册
 - ✅ 完整 Demo 应用 (任务管理)
 - ✅ 脚手架 CLI 工具
-- ✅ @palette/auth 企业级增强 (权限 Hook, RequirePermission, useSessionExpiry)
+- ✅ @palette/auth 企业级增强 (权限Hook, RequirePermission, useSessionExpiry)
 - ✅ @palette/config 企业级增强 (Feature Flag, 环境检测)
 - ✅ @palette/api TanStack Query v5 + 脚手架 CLI 集成
+- ✅ @palette/router 企业级增强 (动态菜单, 权限路由守卫, buildMenuRoutes)
+- ✅ @palette/context 多租户支持 (租户解析/切换, 多策略, 租户事件总线)
 
 ---
 
