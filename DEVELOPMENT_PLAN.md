@@ -61,7 +61,7 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 | **Demo 应用** | 85% | 🟢 前后端 Demo 完整实现，后端编译通过 |
 | **脚手架工具** | 80% | 🟢 CLI 工具完成，测试通过 |
 | **CI/CD** | 0% | 🔴 未开始 |
-| **文档体系** | 40% | 🟡 BFF README + 架构文档，缺少开发者文档 |
+| **文档体系** | 70% | 🟢 开发者指南 + 包参考 + BFF API 参考 + 业务接入指南 + 常见模式 |
 | **测试覆盖** | 10% | 🔴 BFF 有基础测试，前端无测试 |
 
 ### 2.2 已完成的核心能力
@@ -108,6 +108,7 @@ Palette 是企业级前端平台，为证券后清算业务团队提供标准化
 - ✅ 声明式路由注册
 - ✅ 完整 Demo 应用 (任务管理)
 - ✅ 脚手架 CLI 工具
+- ✅ 开发者文档体系 (快速入门/包参考/BFF API/业务接入/常见模式)
 - ✅ @palette/auth 企业级增强 (权限Hook, RequirePermission, useSessionExpiry)
 - ✅ @palette/config 企业级增强 (Feature Flag, 环境检测)
 - ✅ @palette/api TanStack Query v5 + 脚手架 CLI 集成

@@ -51,6 +51,19 @@ pnpm --filter palette-demo dev
 # → https://localhost:3001
 ```
 
+## 文档
+
+| 文档 | 说明 |
+|------|------|
+| [开发者文档](./docs/developer-guide/README.md) | 开发者指南入口 |
+| [快速入门](./docs/developer-guide/getting-started.md) | 环境搭建、项目启动、第一个页面 |
+| [业务接入指南](./docs/developer-guide/business-onboarding.md) | 新业务应用完整接入流程 |
+| [平台包参考](./docs/developer-guide/packages-reference.md) | 9 个 `@palette/*` 包 API 文档 |
+| [BFF API 参考](./docs/developer-guide/bff-api-reference.md) | BFF 全部端点文档 |
+| [常见模式与示例](./docs/developer-guide/patterns-and-recipes.md) | 企业级前端开发模式 |
+| [BFF 架构文档](./palette-bff/docs/architecture.md) | BFF 架构设计与流程图 |
+| [开发计划](./DEVELOPMENT_PLAN.md) | 项目进度与路线图 |
+
 ## Demo 业务场景
 
 Demo 实现了一个 **任务管理系统 (Task Management)**，展示了如何在 Palette 平台上构建完整业务应用：
